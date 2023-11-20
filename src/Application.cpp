@@ -16,9 +16,8 @@
 #include <GLFW/glfw3.h>
 /*
     Use docs.gl for OpenGL documentation and in-depth understanding. Its mastery is key.
+    Avoid creating functions and variables with OpenGL types; use C++
 */
-
-// Avoid creating functions and variables with OpenGL types; use C++
 
 struct ShaderProgramSource
 {
@@ -146,13 +145,21 @@ int main(void)
     // We know have access to all OpenGL functions of our driver's OpenGL version.
     std::cout << glGetString(GL_VERSION) << std::endl; // 4.6.0 NVIDIA 546.17
 
+    /*
+        When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC). 
+        In NDC, the coordinate system is defined where each axis has a range from -1 to 1, 
+        with the origin (0, 0, 0) at the center of the screen/window.
+    */
+
     // Define vertex buffer
-    float vertexPositions[6] =
+    float vertexPositions[] =
     {
-        -0.5f, -0.5,
-         0.0f,  0.5f,
-         0.5f, -0.5f
+        -0.5f, -0.5f, // 0
+         0.5f, -0.5f, // 1
+         0.5f,  0.5f, // 2
+        -0.5f,  0.5f // 3
     };
+
     // Buffer objects are necessary to efficiently manage and store vertex data in GPU memory.
     unsigned int buffer;
     glGenBuffers(1, &buffer);
@@ -161,7 +168,7 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     // Uploads the vertex data (vertexPositions) to the GPU's memory for fast and efficient rendering.
     // When passing an array to a function, it decays into a pointer to its first element rather than being copied.
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertexPositions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), vertexPositions, GL_STATIC_DRAW);
     // Specifies how OpenGL should interpret the vertex data. Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
     // Only one vertex attribute in this case (position), each with two floats (size == component count, not bytes), with vertex stride of 8 bytes.
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
@@ -170,11 +177,22 @@ int main(void)
     glEnableVertexAttribArray(0);
     // Up until here, the white triangle already renders because the NVIDIA GPU driver provides a default shader (program that runs on the GPU).
 
+    // Define index buffer to reuse vertices (must be unsigned)
+    // Could use unsigned char instead of int (1 byte vs 4), but the range is only 0 - 255 (max # of indices).
+    unsigned int indices[]
+    {
+        0, 1, 2,
+        2, 3, 0
+    };
+    // Set index buffer state
+    unsigned int indexBufferObject;
+    glGenBuffers(1, &indexBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
     // Shaders
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
-
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-
     glUseProgram(shader);
 
     /* Loop until the user closes the window */
@@ -184,8 +202,9 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Modern OpenGL requires a vertex [GPU memory (vRAM)] buffer and a [GPU] shader.
-        glDrawArrays(GL_TRIANGLES, 0, 3); // does not require an index buffer
-        //glDrawElements(GL_TRIANGLES, 3, ); // requires an index buffer
+        //glDrawArrays(GL_TRIANGLES, 0, 3); // does not require an index buffer
+        // 6 indices, unsigned int enum, and pointer to indices not required because it's already bound (global state machine)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // requires an index buffer
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

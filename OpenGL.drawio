@@ -1,0 +1,112 @@
+<mxfile host="app.diagrams.net" modified="2023-11-20T20:24:51.829Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="C33CupoYCcNTFL7U9sh3" version="22.1.3" type="device">
+  <diagram name="Page-1" id="ZNABBC2aGjuWdNrNK6D-">
+    <mxGraphModel dx="1167" dy="593" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sqf7HXCJB63_eImmVd2U-1" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Initialize GLFW to interface with the operating system&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="520" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-2" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Create window, OpenGL context, and make the window&#39;s context current&amp;nbsp;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="400" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-4" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Initialize GLEW to access modern OpenGL functions in our NVIDIA GPU drivers&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="280" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-5" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-1" target="sqf7HXCJB63_eImmVd2U-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="340" y="540" as="sourcePoint" />
+            <mxPoint x="390" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-6" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-2" target="sqf7HXCJB63_eImmVd2U-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="290" y="400" as="sourcePoint" />
+            <mxPoint x="340" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-7" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Create buffer object to manage and store vertex data in GPU memory&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="160" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-8" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Bind buffer for OpenGL to know which buffer we are working with in subsequent calls&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-10" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-4" target="sqf7HXCJB63_eImmVd2U-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="310" y="320" as="sourcePoint" />
+            <mxPoint x="360" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-11" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-7" target="sqf7HXCJB63_eImmVd2U-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="160" as="sourcePoint" />
+            <mxPoint x="370" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-12" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Upload vertex data to the GPU&#39;s memory for fast and efficient rendering&lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="40" width="210" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-13" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-8" target="sqf7HXCJB63_eImmVd2U-12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="360" y="190" as="sourcePoint" />
+            <mxPoint x="410" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-14" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Specify vertex attribute pointer so OpenGL knows how to interpret the layout of the vertex buffer&lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="40" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-15" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-12" target="sqf7HXCJB63_eImmVd2U-14">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="200" as="sourcePoint" />
+            <mxPoint x="620" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-16" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Enable vertex attribute array for the attribute index specified in glVertexAttribPointer&lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="890" y="40" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-17" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-14" target="sqf7HXCJB63_eImmVd2U-16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="800" y="210" as="sourcePoint" />
+            <mxPoint x="850" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-18" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Parse .shader file to load the vertex &amp;amp; fragment shader source code (GLSL) to set position &amp;amp; color&lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="875" y="160" width="290" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-19" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-16" target="sqf7HXCJB63_eImmVd2U-18">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="810" y="200" as="sourcePoint" />
+            <mxPoint x="860" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-20" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Create shader GPU program, create &amp;amp; compile shaders, attach &amp;amp; link them to the program, validate &amp;amp; use program.&lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="280" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-21" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-18" target="sqf7HXCJB63_eImmVd2U-20">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="810" y="240" as="sourcePoint" />
+            <mxPoint x="860" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-22" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;GL_STATIC_DRAW triangle in rendering loop while the window is open&lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="907.5" y="400" width="225" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-23" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-20" target="sqf7HXCJB63_eImmVd2U-22">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="400" as="sourcePoint" />
+            <mxPoint x="750" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-25" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Delete shader program and terminate GLFW&lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="907.5" y="520" width="225" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sqf7HXCJB63_eImmVd2U-26" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="sqf7HXCJB63_eImmVd2U-22" target="sqf7HXCJB63_eImmVd2U-25">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="520" as="sourcePoint" />
+            <mxPoint x="800" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
