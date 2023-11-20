@@ -1,3 +1,7 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 /*
     GLEW is used to interface with this machine's GPU drivers to access NVIDIA's OpenGL code implementation.
     It simplifies the process of accessing advanced features and extensions in OpenGL that are not included in the standard OpenGL distribution.
@@ -10,8 +14,104 @@
     that is largely platform-independent, avoiding the need to directly interact with the low-level, platform-specific APIs.
 */
 #include <GLFW/glfw3.h>
+/*
+    Use docs.gl for OpenGL documentation and in-depth understanding. Its mastery is key.
+*/
 
-#include <iostream>
+// Avoid creating functions and variables with OpenGL types; use C++
+
+struct ShaderProgramSource
+{
+    std::string VertexSource;
+    std::string FragmentSource;
+};
+
+static ShaderProgramSource ParseShader(const std::string& filePath)
+{
+    enum class ShaderType
+    {
+        NONE = -1, VERTEX = 0, FRAGMENT = 1
+    };
+
+    std::ifstream stream { filePath };
+    std::string line;
+    std::stringstream source[2];
+    ShaderType type = ShaderType::NONE;
+
+    while (getline(stream, line))
+    {
+        if (line.find("#shader") != std::string::npos)
+        {
+            if (line.find("vertex") != std::string::npos)
+            {
+                type = ShaderType::VERTEX;
+            }
+            else if (line.find("fragment") != std::string::npos)
+            {
+                type = ShaderType::FRAGMENT;
+            }
+        }
+        else
+        {
+            source[(int)type] << line << "\n";
+        }
+    }
+
+    return { source[0].str(), source[1].str() };
+}
+
+static unsigned int CompileShader(unsigned int type, const std::string& source)
+{
+    unsigned int id = glCreateShader(type);
+    const char* src = source.c_str();
+    glShaderSource(id, 1, &src, nullptr);
+    glCompileShader(id);
+
+    // Error handling
+
+    int result;
+
+    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+
+    if (result == GL_FALSE)
+    {
+        int length;
+
+        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+
+        // we want the message allocated on the stack
+        char* message = (char*)alloca(length * sizeof(char));
+
+        glGetShaderInfoLog(id, length, &length, message);
+
+        std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader." << std::endl;
+        std::cout << message << std::endl;
+
+        glDeleteShader(id);
+
+        return 0;
+    }
+
+    return id;
+}
+
+// The parameters are references to the actual source code (lifetimes > function scope)
+static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
+{
+    unsigned int program = glCreateProgram();
+    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glLinkProgram(program);
+    glValidateProgram(program);
+    // delete intermediate .obj files since program linking is done
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    return program;
+}
 
 int main(void)
 {
@@ -70,6 +170,13 @@ int main(void)
     glEnableVertexAttribArray(0);
     // Up until here, the white triangle already renders because the NVIDIA GPU driver provides a default shader (program that runs on the GPU).
 
+    // Shaders
+    ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
+
+    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+
+    glUseProgram(shader);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -86,6 +193,8 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+    glDeleteProgram(shader);
 
     glfwTerminate();
 
