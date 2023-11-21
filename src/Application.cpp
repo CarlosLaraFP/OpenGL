@@ -19,6 +19,29 @@
     Avoid creating functions and variables with OpenGL types; use C++
 */
 
+// Macro with compiler intrinsic to set breakpoints programatically
+#define ASSERT(x) if (!(x)) __debugbreak();
+// # in front of x turns it into a string
+#define GLCall(x) GLClearError();\
+    x;\
+    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+
+static void GLClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+
+// OpenGL specifies all its enums in hexadecimal
+static bool GLLogCall(const char* function, const char* file, int line)
+{
+    if (GLenum error = glGetError())
+    {
+        std::cout << "[OpenGL Error] (" << error << "): " << function << " " << file << ":" << line << std::endl;
+        return false;
+    }
+    return true;
+}
+
 struct ShaderProgramSource
 {
     std::string VertexSource;
@@ -157,24 +180,24 @@ int main(void)
         -0.5f, -0.5f, // 0
          0.5f, -0.5f, // 1
          0.5f,  0.5f, // 2
-        -0.5f,  0.5f // 3
+        -0.5f,  0.5f  // 3
     };
 
     // Buffer objects are necessary to efficiently manage and store vertex data in GPU memory.
     unsigned int buffer;
-    glGenBuffers(1, &buffer);
+    GLCall(glGenBuffers(1, &buffer));
     // Binding the buffer is essential for OpenGL to know which buffer we're working with in subsequent calls.
     // Any subsequent buffer operations that target GL_ARRAY_BUFFER will affect the buffer you've bound.
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
     // Uploads the vertex data (vertexPositions) to the GPU's memory for fast and efficient rendering.
     // When passing an array to a function, it decays into a pointer to its first element rather than being copied.
-    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), vertexPositions, GL_STATIC_DRAW);
+    GLCall(glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(float), vertexPositions, GL_STATIC_DRAW));
     // Specifies how OpenGL should interpret the vertex data. Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
     // Only one vertex attribute in this case (position), each with two floats (size == component count, not bytes), with vertex stride of 8 bytes.
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0));
     // Enables the vertex attribute array for attribute index 0, which was specified in glVertexAttribPointer.
     // This call is essential to activate the use of the specified vertex data during rendering.
-    glEnableVertexAttribArray(0);
+    GLCall(glEnableVertexAttribArray(0));
     // Up until here, the white triangle already renders because the NVIDIA GPU driver provides a default shader (program that runs on the GPU).
 
     // Define index buffer to reuse vertices (must be unsigned)
@@ -186,14 +209,14 @@ int main(void)
     };
     // Set index buffer state
     unsigned int indexBufferObject;
-    glGenBuffers(1, &indexBufferObject);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    GLCall(glGenBuffers(1, &indexBufferObject));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 
     // Shaders
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-    glUseProgram(shader);
+    GLCall(glUseProgram(shader));
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -204,7 +227,12 @@ int main(void)
         // Modern OpenGL requires a vertex [GPU memory (vRAM)] buffer and a [GPU] shader.
         //glDrawArrays(GL_TRIANGLES, 0, 3); // does not require an index buffer
         // 6 indices, unsigned int enum, and pointer to indices not required because it's already bound (global state machine)
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // requires an index buffer
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // requires an index buffer
+        /*
+        GLClearError();
+        glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
+        if (!(GLLogCall("glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr)", __FILE__, __LINE__))) __debugbreak();
+        */
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -213,7 +241,7 @@ int main(void)
         glfwPollEvents();
     }
 
-    glDeleteProgram(shader);
+    GLCall(glDeleteProgram(shader));
 
     glfwTerminate();
 
