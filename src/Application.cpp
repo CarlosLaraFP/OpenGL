@@ -18,29 +18,9 @@
     Use docs.gl for OpenGL documentation and in-depth understanding. Its mastery is key.
     Avoid creating functions and variables with OpenGL types; use C++
 */
-
-// Macro with compiler intrinsic to set breakpoints programatically
-#define ASSERT(x) if (!(x)) __debugbreak();
-// # in front of x turns it into a string
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-static void GLClearError()
-{
-    while (glGetError() != GL_NO_ERROR);
-}
-
-// OpenGL specifies all its enums in hexadecimal
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-    if (GLenum error = glGetError())
-    {
-        std::cout << "[OpenGL Error] (" << error << "): " << function << " " << file << ":" << line << std::endl;
-        return false;
-    }
-    return true;
-}
+#include "Renderer.hpp"
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 struct ShaderProgramSource
 {
@@ -178,20 +158,7 @@ int main(void)
     // We know have access to all OpenGL functions of our driver's OpenGL version.
     std::cout << glGetString(GL_VERSION) << std::endl; // 4.6.0 NVIDIA 546.17 is the latest
 
-    /*
-        When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC). 
-        In NDC, the coordinate system is defined where each axis has a range from -1 to 1, 
-        with the origin (0, 0, 0) at the center of the screen/window.
-    */
-
-    // Define vertex buffer
-    float vertexPositions[] =
-    {
-        -0.5f, -0.5f, // 0
-         0.5f, -0.5f, // 1
-         0.5f,  0.5f, // 2
-        -0.5f,  0.5f  // 3
-    };
+    // TODO: class Rectangle
 
     /*
         The VAO is a GPU-side object that holds the state needed to supply vertex data to vertex shaders. 
@@ -199,20 +166,23 @@ int main(void)
     */
     unsigned int vertexArrayObject;
     GLCall(glGenVertexArrays(1, &vertexArrayObject));
-    /*
-        Tells OpenGL that the VAO with the given ID is now in use, prompting the GPU to allocate memory and initialize the state for this VAO.
-    */
+    // Tells OpenGL that the VAO with the given ID is now in use, prompting the GPU to allocate memory and initialize the state for this VAO.
     GLCall(glBindVertexArray(vertexArrayObject));
 
-    // Buffer objects are necessary to efficiently manage and store vertex data in GPU memory.
-    unsigned int vertexBufferObject;
-    GLCall(glGenBuffers(1, &vertexBufferObject));
-    // Binding the buffer is essential for OpenGL to know which buffer we're working with in subsequent calls.
-    // Any subsequent buffer operations that target GL_ARRAY_BUFFER will affect the buffer you've bound.
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject));
-    // Copies the vertex data (vertexPositions) to the GPU's memory for fast and efficient rendering.
-    // When passing an array to a function, it decays into a pointer to its first element rather than being copied.
-    GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), vertexPositions, GL_STATIC_DRAW));
+    /*
+        When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC).
+        In NDC, the coordinate system is defined where each axis has a range from -1 to 1,
+        with the origin (0, 0, 0) at the center of the screen/window.
+    */
+    float vertexPositions[] =
+    {
+        -0.5f, -0.5f, // 0
+         0.5f, -0.5f, // 1
+         0.5f,  0.5f, // 2
+        -0.5f,  0.5f  // 3
+    };
+    VertexBuffer* vbo = new VertexBuffer { vertexPositions, 4 * 2 * sizeof(float) };
+
     // Enables the vertex attribute array for attribute index 0, to be specified in glVertexAttribPointer.
     // This call is essential to activate the use of the specified vertex data during rendering.
     GLCall(glEnableVertexAttribArray(0));
@@ -228,11 +198,7 @@ int main(void)
         0, 1, 2,
         2, 3, 0
     };
-    // Set index buffer state
-    unsigned int indexBufferObject;
-    GLCall(glGenBuffers(1, &indexBufferObject));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+    IndexBuffer* ibo = new IndexBuffer { indices, 6 };
 
     // Shaders
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
@@ -244,7 +210,7 @@ int main(void)
     ASSERT(colorLocation != -1);
     //GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
     float red = 0.0f; // Initialize color
-    float increment = 0.05f;
+    float increment = 0.02f;
 
     GLCall(int rotationLocation = glGetUniformLocation(shader, "u_Rotation"));
     ASSERT(rotationLocation != -1);
@@ -291,11 +257,11 @@ int main(void)
 
         red += increment;
 
-        if (red > 1.0f) { increment = -0.05f; }
-        else if (red < 0.0f) { increment = 0.05; }
+        if (red > 1.0f) { increment = -0.02f; }
+        else if (red < 0.0f) { increment = 0.02f; }
 
         // Increase by 5 degrees per frame
-        rotationAngle += 1.0f;
+        rotationAngle += 2.0f;
         // Wrap around if it exceeds 360 degrees
         if (rotationAngle >= 360.0f) { rotationAngle -= 360.0f; }
 
@@ -306,8 +272,10 @@ int main(void)
         glfwPollEvents();
     }
 
+    // Clean up resources
     GLCall(glDeleteProgram(shader));
-
+    delete vbo;
+    delete ibo;
     glfwTerminate();
 
     return 0;
