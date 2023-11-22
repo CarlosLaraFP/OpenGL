@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <memory>
 /*
     GLEW is used to interface with this machine's GPU drivers to access NVIDIA's OpenGL code implementation.
     It simplifies the process of accessing advanced features and extensions in OpenGL that are not included in the standard OpenGL distribution.
@@ -18,6 +19,7 @@
     Use docs.gl for OpenGL documentation and in-depth understanding. Its mastery is key.
     Avoid creating functions and variables with OpenGL types; use C++
 */
+#include "Window.hpp"
 #include "Renderer.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
@@ -117,46 +119,7 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 
 int main(void)
 {
-    GLFWwindow* window;
-
-    /* Initialize the library */
-    if (!glfwInit())
-    {
-        std::cout << "GLFW could not be initialized." << std::endl;
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // Enforce the use of Vertex Array Objects (VAOs)
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-
-    // Vertical synchronization in the context of double buffering.
-    // Synchronizes the buffer swap with the monitor's refresh rate and reduces unnecessary strain on the CPU and GPU.
-    // Setting it to 1 on a 60Hz monitor caps the frame rate at 60 FPS.
-    glfwSwapInterval(1);
-
-    // We call glewInit() to initialize the extension entry points after creating a valid OpenGL rendering context.
-    if (glewInit() != GLEW_OK)
-    {
-        std::cout << "GLEW could not be initialized." << std::endl;
-        return -1;
-    }
-
-    // We know have access to all OpenGL functions of our driver's OpenGL version.
-    std::cout << glGetString(GL_VERSION) << std::endl; // 4.6.0 NVIDIA 546.17 is the latest
+    Window window;
 
     // TODO: class Rectangle
 
@@ -181,7 +144,7 @@ int main(void)
          0.5f,  0.5f, // 2
         -0.5f,  0.5f  // 3
     };
-    VertexBuffer* vbo = new VertexBuffer { vertexPositions, 4 * 2 * sizeof(float) };
+    auto vbo = std::make_unique<VertexBuffer>(vertexPositions, 4 * 2 * sizeof(float));
 
     // Enables the vertex attribute array for attribute index 0, to be specified in glVertexAttribPointer.
     // This call is essential to activate the use of the specified vertex data during rendering.
@@ -198,7 +161,7 @@ int main(void)
         0, 1, 2,
         2, 3, 0
     };
-    IndexBuffer* ibo = new IndexBuffer { indices, 6 };
+    auto ibo = std::make_unique<IndexBuffer>(indices, 6);
 
     // Shaders
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
@@ -226,7 +189,7 @@ int main(void)
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
     
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window.GetWindow()))
     {
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
@@ -266,7 +229,7 @@ int main(void)
         if (rotationAngle >= 360.0f) { rotationAngle -= 360.0f; }
 
         /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window.GetWindow());
 
         /* Poll for and process events */
         glfwPollEvents();
@@ -274,9 +237,7 @@ int main(void)
 
     // Clean up resources
     GLCall(glDeleteProgram(shader));
-    delete vbo;
-    delete ibo;
-    glfwTerminate();
+    // Smart pointers' destructors called in reverse order of creation at the end of this scope.
 
     return 0;
 }
