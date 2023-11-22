@@ -146,6 +146,11 @@ int main(void)
         return -1;
     }
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    // Enforce the use of Vertex Array Objects (VAOs)
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
 
@@ -158,7 +163,9 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    // vertical synchronization
+    // Vertical synchronization in the context of double buffering.
+    // Synchronizes the buffer swap with the monitor's refresh rate and reduces unnecessary strain on the CPU and GPU.
+    // Setting it to 1 on a 60Hz monitor caps the frame rate at 60 FPS.
     glfwSwapInterval(1);
 
     // We call glewInit() to initialize the extension entry points after creating a valid OpenGL rendering context.
@@ -169,7 +176,7 @@ int main(void)
     }
 
     // We know have access to all OpenGL functions of our driver's OpenGL version.
-    std::cout << glGetString(GL_VERSION) << std::endl; // 4.6.0 NVIDIA 546.17
+    std::cout << glGetString(GL_VERSION) << std::endl; // 4.6.0 NVIDIA 546.17 is the latest
 
     /*
         When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC). 
@@ -186,22 +193,33 @@ int main(void)
         -0.5f,  0.5f  // 3
     };
 
+    /*
+        The VAO is a GPU-side object that holds the state needed to supply vertex data to vertex shaders. 
+        The link between the attributes defined in the VAO and those in the shader is made through the attribute indices. 
+    */
+    unsigned int vertexArrayObject;
+    GLCall(glGenVertexArrays(1, &vertexArrayObject));
+    /*
+        Tells OpenGL that the VAO with the given ID is now in use, prompting the GPU to allocate memory and initialize the state for this VAO.
+    */
+    GLCall(glBindVertexArray(vertexArrayObject));
+
     // Buffer objects are necessary to efficiently manage and store vertex data in GPU memory.
-    unsigned int buffer;
-    GLCall(glGenBuffers(1, &buffer));
+    unsigned int vertexBufferObject;
+    GLCall(glGenBuffers(1, &vertexBufferObject));
     // Binding the buffer is essential for OpenGL to know which buffer we're working with in subsequent calls.
     // Any subsequent buffer operations that target GL_ARRAY_BUFFER will affect the buffer you've bound.
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-    // Uploads the vertex data (vertexPositions) to the GPU's memory for fast and efficient rendering.
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject));
+    // Copies the vertex data (vertexPositions) to the GPU's memory for fast and efficient rendering.
     // When passing an array to a function, it decays into a pointer to its first element rather than being copied.
-    GLCall(glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(float), vertexPositions, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), vertexPositions, GL_STATIC_DRAW));
+    // Enables the vertex attribute array for attribute index 0, to be specified in glVertexAttribPointer.
+    // This call is essential to activate the use of the specified vertex data during rendering.
+    GLCall(glEnableVertexAttribArray(0));
     // Specifies how OpenGL should interpret the vertex data. Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
     // Only one vertex attribute in this case (position), each with two floats (size == component count, not bytes), with vertex stride of 8 bytes.
     GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0));
-    // Enables the vertex attribute array for attribute index 0, which was specified in glVertexAttribPointer.
-    // This call is essential to activate the use of the specified vertex data during rendering.
-    GLCall(glEnableVertexAttribArray(0));
-    // Up until here, the white triangle already renders because the NVIDIA GPU driver provides a default shader (program that runs on the GPU).
+    // Up until here, the specific VAO encapsulates the state of the VBO. This remains even if the VAO is unbound.
 
     // Define index buffer to reuse vertices (must be unsigned)
     // Could use unsigned char instead of int (1 byte vs 4), but the range is only 0 - 255 (max # of indices).
@@ -222,21 +240,44 @@ int main(void)
     GLCall(glUseProgram(shader));
 
     // Once the shader is created, every uniform gets assigned an ID so that we can reference it (lookup by name).
-    GLCall(int location = glGetUniformLocation(shader, "u_Color"));
-    ASSERT(location != -1);
-    GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
-
-    float red = 0.0f;
+    GLCall(int colorLocation = glGetUniformLocation(shader, "u_Color"));
+    ASSERT(colorLocation != -1);
+    //GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
+    float red = 0.0f; // Initialize color
     float increment = 0.05f;
 
+    GLCall(int rotationLocation = glGetUniformLocation(shader, "u_Rotation"));
+    ASSERT(rotationLocation != -1);
+    float rotationAngle = 0.0f; // Initialize rotation angle
+
+    // Unbind everything, starting with VAO
+    GLCall(glBindVertexArray(0));
+    // Shaders can unbound independently
+    GLCall(glUseProgram(0));
+    // When we unbind buffer objects after unbinding the VAO, it ensures that these unbinding actions don't alter the state of the VAO.
+    // Therefore, re-binding buffer objects before every draw call is not necessary.
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-        // Animate color (fragment shader)
-        GLCall(glUniform4f(location, red, 0.3f, 0.8f, 1.0f));
+        /*
+            When you configure a VAO and subsequently use it in a draw call, OpenGL uses the state information stored in the VAO 
+            to set up the necessary inputs for the vertex shader. This setup includes information about where in the GPU memory 
+            the vertex data is, how it's formatted, and how it should be fed into the vertex shader's inputs.
+        */
+        GLCall(glUseProgram(shader));
+        // Uniforms are used to pass data from the CPU (C++ app) to the GPU (shader program).
+        // Animate color (fragment shader). Uniforms are set per draw call.
+        GLCall(glUniform4f(colorLocation, red, 0.3f, 0.8f, 1.0f));
+        GLCall(glUniform1f(rotationLocation, rotationAngle));
+
+        // Binding VAO is enough because it already encapsulates the VBO and IBO state.
+        GLCall(glBindVertexArray(vertexArrayObject));
 
         // Modern OpenGL requires a vertex [GPU memory (vRAM)] buffer and a [GPU] shader.
         //glDrawArrays(GL_TRIANGLES, 0, 3); // does not require an index buffer
@@ -248,10 +289,15 @@ int main(void)
         if (!(GLLogCall("glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr)", __FILE__, __LINE__))) __debugbreak();
         */
 
+        red += increment;
+
         if (red > 1.0f) { increment = -0.05f; }
         else if (red < 0.0f) { increment = 0.05; }
 
-        red += increment;
+        // Increase by 5 degrees per frame
+        rotationAngle += 1.0f;
+        // Wrap around if it exceeds 360 degrees
+        if (rotationAngle >= 360.0f) { rotationAngle -= 360.0f; }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
