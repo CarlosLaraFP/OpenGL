@@ -13,13 +13,13 @@
 */
 #include <GLFW/glfw3.h>
 
-class Window
+class Context
 {
 private:
 	GLFWwindow* m_Window;
 
 public:
-	Window();
-	~Window();
+    Context();
+	~Context();
     GLFWwindow* GetWindow() const;
 };

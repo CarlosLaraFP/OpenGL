@@ -19,8 +19,9 @@
     Use docs.gl for OpenGL documentation and in-depth understanding. Its mastery is key.
     Avoid creating functions and variables with OpenGL types; use C++
 */
-#include "Window.hpp"
+#include "Context.hpp"
 #include "Renderer.hpp"
+#include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 
@@ -119,19 +120,13 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 
 int main(void)
 {
-    Window window;
+    Context context;
 
     // TODO: class Rectangle
 
-    /*
-        The VAO is a GPU-side object that holds the state needed to supply vertex data to vertex shaders. 
-        The link between the attributes defined in the VAO and those in the shader is made through the attribute indices. 
-    */
-    unsigned int vertexArrayObject;
-    GLCall(glGenVertexArrays(1, &vertexArrayObject));
-    // Tells OpenGL that the VAO with the given ID is now in use, prompting the GPU to allocate memory and initialize the state for this VAO.
-    GLCall(glBindVertexArray(vertexArrayObject));
-
+    VertexArray vao;
+    
+    unsigned int vertexComponents = 2;
     /*
         When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC).
         In NDC, the coordinate system is defined where each axis has a range from -1 to 1,
@@ -144,24 +139,18 @@ int main(void)
          0.5f,  0.5f, // 2
         -0.5f,  0.5f  // 3
     };
-    auto vbo = std::make_unique<VertexBuffer>(vertexPositions, 4 * 2 * sizeof(float));
+    VertexBuffer vbo { vertexPositions, 4 * vertexComponents * sizeof(float) };
+    
+    vao.EnableVertexAttribute(0, vertexComponents, sizeof(float), GL_FLOAT, GL_FALSE);
 
-    // Enables the vertex attribute array for attribute index 0, to be specified in glVertexAttribPointer.
-    // This call is essential to activate the use of the specified vertex data during rendering.
-    GLCall(glEnableVertexAttribArray(0));
-    // Specifies how OpenGL should interpret the vertex data. Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
-    // Only one vertex attribute in this case (position), each with two floats (size == component count, not bytes), with vertex stride of 8 bytes.
-    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0));
-    // Up until here, the specific VAO encapsulates the state of the VBO. This remains even if the VAO is unbound.
-
-    // Define index buffer to reuse vertices (must be unsigned)
-    // Could use unsigned char instead of int (1 byte vs 4), but the range is only 0 - 255 (max # of indices).
     unsigned int indices[]
     {
         0, 1, 2,
         2, 3, 0
     };
-    auto ibo = std::make_unique<IndexBuffer>(indices, 6);
+    IndexBuffer ibo { indices, 6 };
+
+    // Up until here, the specific VAO encapsulates the state of the VBO and IBO. This remains even if the VAO is unbound.
 
     // Shaders
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
@@ -180,16 +169,16 @@ int main(void)
     float rotationAngle = 0.0f; // Initialize rotation angle
 
     // Unbind everything, starting with VAO
-    GLCall(glBindVertexArray(0));
+    vao.Unbind();
     // Shaders can unbound independently
     GLCall(glUseProgram(0));
     // When we unbind buffer objects after unbinding the VAO, it ensures that these unbinding actions don't alter the state of the VAO.
     // Therefore, re-binding buffer objects before every draw call is not necessary.
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    vbo.Unbind();
+    ibo.Unbind();
     
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window.GetWindow()))
+    while (!glfwWindowShouldClose(context.GetWindow()))
     {
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
@@ -206,16 +195,14 @@ int main(void)
         GLCall(glUniform1f(rotationLocation, rotationAngle));
 
         // Binding VAO is enough because it already encapsulates the VBO and IBO state.
-        GLCall(glBindVertexArray(vertexArrayObject));
+        vao.Bind();
 
-        // Modern OpenGL requires a vertex [GPU memory (vRAM)] buffer and a [GPU] shader.
-        //glDrawArrays(GL_TRIANGLES, 0, 3); // does not require an index buffer
         // 6 indices, unsigned int enum, and pointer to indices not required because it's already bound (global state machine)
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // requires an index buffer
-        /*
-        GLClearError();
-        glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
-        if (!(GLLogCall("glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr)", __FILE__, __LINE__))) __debugbreak();
+        /* macro expands to:
+            GLClearError();
+            glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
+            if (!(GLLogCall("glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr)", __FILE__, __LINE__))) __debugbreak();
         */
 
         red += increment;
@@ -229,7 +216,7 @@ int main(void)
         if (rotationAngle >= 360.0f) { rotationAngle -= 360.0f; }
 
         /* Swap front and back buffers */
-        glfwSwapBuffers(window.GetWindow());
+        glfwSwapBuffers(context.GetWindow());
 
         /* Poll for and process events */
         glfwPollEvents();
@@ -237,7 +224,7 @@ int main(void)
 
     // Clean up resources
     GLCall(glDeleteProgram(shader));
-    // Smart pointers' destructors called in reverse order of creation at the end of this scope.
+    // Destructors called in reverse order of creation at the end of this scope.
 
     return 0;
 }

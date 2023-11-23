@@ -1,9 +1,9 @@
-#include "Window.hpp"
+#include "Context.hpp"
 
 #include <iostream>
 #include <stdexcept>
 
-Window::Window()
+Context::Context()
 {
     /* Initialize the library */
     if (!glfwInit())
@@ -17,9 +17,9 @@ Window::Window()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    m_Window = glfwCreateWindow(640, 480, "Graphics Programming", NULL, NULL);
+    m_Window = glfwCreateWindow(640, 480, "Graphics Programming", nullptr, nullptr);
 
-    if (!m_Window)
+    if (m_Window == nullptr)
     {
         glfwTerminate();
 
@@ -44,12 +44,12 @@ Window::Window()
     std::cout << glGetString(GL_VERSION) << std::endl; // 4.6.0 NVIDIA 546.17 is the latest
 }
 
-Window::~Window()
+Context::~Context()
 {
     glfwTerminate();
 }
 
-GLFWwindow* Window::GetWindow() const
+GLFWwindow* Context::GetWindow() const
 {
     return m_Window;
 }
