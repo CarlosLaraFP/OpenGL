@@ -1,4 +1,3 @@
-#shader vertex
 #version 330 core
 
 // Vertex attributes are the inputs that our vertex shader receives. 
@@ -16,17 +15,4 @@ void main()
     float rad = radians(u_Rotation);
     mat2 rotationMatrix = mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
     gl_Position = vec4(rotationMatrix * position, 0.0, 1.0);
-};
-
-
-#shader fragment
-#version 330 core
-        
-out vec4 color;
-
-uniform vec4 u_Color;
-        
-void main()
-{
-    color = u_Color;
 };

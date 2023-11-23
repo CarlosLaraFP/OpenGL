@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer.hpp"
+#include "VertexBuffer.hpp"
 
 /*
 	The VAO is a GPU-side object that holds the state needed to supply vertex data to vertex shaders.
@@ -15,7 +15,7 @@ public:
 	VertexArray();
 	~VertexArray();
 
-	void EnableVertexAttribute(unsigned int index, unsigned int componentCount, unsigned int componentBytes, GLenum componentType, GLboolean normalized, const GLvoid* offset = 0);
+	void AddBuffer(const VertexBuffer& vbo);
 	void Bind() const;
 	void Unbind() const;
 };

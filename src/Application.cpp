@@ -25,44 +25,18 @@
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 
-struct ShaderProgramSource
+static std::string ParseShader(const std::string& filePath)
 {
-    std::string VertexSource;
-    std::string FragmentSource;
-};
-
-static ShaderProgramSource ParseShader(const std::string& filePath)
-{
-    enum class ShaderType
-    {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1
-    };
-
     std::ifstream stream { filePath };
     std::string line;
-    std::stringstream source[2];
-    ShaderType type = ShaderType::NONE;
+    std::stringstream source;
 
     while (getline(stream, line))
     {
-        if (line.find("#shader") != std::string::npos)
-        {
-            if (line.find("vertex") != std::string::npos)
-            {
-                type = ShaderType::VERTEX;
-            }
-            else if (line.find("fragment") != std::string::npos)
-            {
-                type = ShaderType::FRAGMENT;
-            }
-        }
-        else
-        {
-            source[(int)type] << line << "\n";
-        }
+        source << line << "\n";
     }
 
-    return { source[0].str(), source[1].str() };
+    return source.str();
 }
 
 static unsigned int CompileShader(unsigned int type, const std::string& source)
@@ -140,8 +114,9 @@ int main(void)
         -0.5f,  0.5f  // 3
     };
     VertexBuffer vbo { vertexPositions, 4 * vertexComponents * sizeof(float) };
-    
-    vao.EnableVertexAttribute(0, vertexComponents, sizeof(float), GL_FLOAT, GL_FALSE);
+    vbo.Push<float>(vertexComponents);
+    // Since there may be multiple vertex buffers, and multiple vertex attributes belonging to each, we need a more general AddBuffer
+    vao.AddBuffer(vbo);
 
     unsigned int indices[]
     {
@@ -153,8 +128,9 @@ int main(void)
     // Up until here, the specific VAO encapsulates the state of the VBO and IBO. This remains even if the VAO is unbound.
 
     // Shaders
-    ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
-    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+    auto vertexSource = ParseShader("res/shaders/Basic.vert");
+    auto fragmentSource = ParseShader("res/shaders/Basic.frag");
+    unsigned int shader = CreateShader(vertexSource, fragmentSource);
     GLCall(glUseProgram(shader));
 
     // Once the shader is created, every uniform gets assigned an ID so that we can reference it (lookup by name).
