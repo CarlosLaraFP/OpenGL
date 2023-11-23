@@ -91,8 +91,15 @@ unsigned int Shader::CreateShader(const ShaderProgramSource shaderSource)
 // Once the shader is created, every uniform gets assigned an ID so that we can reference it (lookup by name).
 unsigned int Shader::GetUniformLocation(const char* name)
 {
+    if (m_UniformLocations.find(name) != m_UniformLocations.end())
+    {
+        return m_UniformLocations[name];
+    }
+
     GLCall(int location = glGetUniformLocation(m_RendererID, name));
+    // If a uniform is declared in the shader file, but it's not used, location will be -1
     ASSERT(location != -1);
+    m_UniformLocations[name] = location;
     return location;
 }
 
@@ -102,10 +109,10 @@ void Shader::SetUniform1f(const char* name, float value)
     GLCall(glUniform1f(location, value));
 }
 
-void Shader::SetUniform4f(const char* name, float f0, float f1, float f2, float f3)
+void Shader::SetUniform4f(const char* name, float v0, float v1, float v2, float v3)
 {
     unsigned int location = GetUniformLocation(name);
-    GLCall(glUniform4f(location, f0, f1, f2, f3));
+    GLCall(glUniform4f(location, v0, v1, v2, v3));
 }
 
 void Shader::Bind() const

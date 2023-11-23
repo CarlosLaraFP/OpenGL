@@ -65,16 +65,16 @@ int main(void)
 
     // Unbind everything, starting with VAO
     vao.Unbind();
-    // Shaders can unbound independently
-    shader.Unbind();
     // When we unbind buffer objects after unbinding the VAO, it ensures that these unbinding actions don't alter the state of the VAO.
     // Therefore, re-binding buffer objects before every draw call is not necessary.
     vbo.Unbind();
     ibo.Unbind();
+    // Shaders can unbound independently
+    shader.Unbind();
 
+    float rotationAngle = 0.0f; // Initialize rotation angle
     float red = 0.0f; // Initialize color
     float increment = 0.02f;
-    float rotationAngle = 0.0f; // Initialize rotation angle
     
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(context.GetWindow()))
@@ -88,8 +88,8 @@ int main(void)
             the vertex data is, how it's formatted, and how it should be fed into the vertex shader's inputs.
         */
         shader.Bind();
-        shader.SetUniform4f("u_Color", red, 0.3f, 0.8f, 1.0f);
         shader.SetUniform1f("u_Rotation", rotationAngle);
+        shader.SetUniform4f("u_Color", red, 0.3f, 0.8f, 1.0f);
 
         // Binding VAO is enough because it already encapsulates the VBO and IBO state.
         vao.Bind();
