@@ -18,6 +18,16 @@ VertexBuffer::~VertexBuffer()
     GLCall(glDeleteBuffers(1, &m_RendererID));
 }
 
+void VertexBuffer::Bind() const
+{
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+}
+
+void VertexBuffer::Unbind() const
+{
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+}
+
 template<typename T>
 void VertexBuffer::Push(unsigned int count)
 {
@@ -28,31 +38,20 @@ void VertexBuffer::Push(unsigned int count)
 template<>
 void VertexBuffer::Push<float>(unsigned int count) 
 {
-    m_Elements.emplace_back(VertexBufferElement{ GL_FLOAT, count, GL_FALSE });
-    m_Stride += count * VertexBufferElement::GetSizeOfType(GL_FLOAT);
+    m_VertexAttributes.emplace_back(VertexAttribute{ GL_FLOAT, count, GL_FALSE });
+    m_Stride += count * VertexAttribute::GetSizeOfType(GL_FLOAT);
 }
 
 template<>
 void VertexBuffer::Push<unsigned int>(unsigned int count) 
 {
-    m_Elements.emplace_back(VertexBufferElement{ GL_UNSIGNED_INT, count, GL_FALSE });
-    m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_INT);
+    m_VertexAttributes.emplace_back(VertexAttribute{ GL_UNSIGNED_INT, count, GL_FALSE });
+    m_Stride += count * VertexAttribute::GetSizeOfType(GL_UNSIGNED_INT);
 }
 
 template<>
 void VertexBuffer::Push<unsigned char>(unsigned int count) 
 {
-    m_Elements.emplace_back(VertexBufferElement{ GL_UNSIGNED_BYTE, count, GL_TRUE });
-    m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
-}
-
-
-void VertexBuffer::Bind() const
-{
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
-}
-
-void VertexBuffer::Unbind() const
-{
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    m_VertexAttributes.emplace_back(VertexAttribute{ GL_UNSIGNED_BYTE, count, GL_TRUE });
+    m_Stride += count * VertexAttribute::GetSizeOfType(GL_UNSIGNED_BYTE);
 }

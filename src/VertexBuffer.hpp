@@ -4,7 +4,7 @@
 
 #include "Renderer.hpp"
 
-struct VertexBufferElement
+struct VertexAttribute
 {
 	unsigned int componentType;
 	unsigned int componentCount;
@@ -31,7 +31,7 @@ class VertexBuffer
 {
 private:
 	unsigned int m_RendererID;
-	std::vector<VertexBufferElement> m_Elements;
+	std::vector<VertexAttribute> m_VertexAttributes;
 	unsigned int m_Stride { 0 };
 
 public:
@@ -41,7 +41,7 @@ public:
 	template<typename T>
 	void Push(unsigned int count);
 
-	inline const std::vector<VertexBufferElement>& GetVertexAttributes() const { return m_Elements; }
+	inline const std::vector<VertexAttribute>& GetVertexAttributes() const { return m_VertexAttributes; }
 	inline unsigned int GetStride() const { return m_Stride; }
 	void Bind() const;
 	void Unbind() const;
