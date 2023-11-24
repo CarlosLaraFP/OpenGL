@@ -75,32 +75,19 @@ int main(void)
     float rotationAngle = 0.0f; // Initialize rotation angle
     float red = 0.0f; // Initialize color
     float increment = 0.02f;
+
+    Renderer renderer;
     
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(context.GetWindow()))
     {
-        /* Render here */
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
+        renderer.Clear();
 
-        /*
-            When you configure a VAO and subsequently use it in a draw call, OpenGL uses the state information stored in the VAO 
-            to set up the necessary inputs for the vertex shader. This setup includes information about where in the GPU memory 
-            the vertex data is, how it's formatted, and how it should be fed into the vertex shader's inputs.
-        */
         shader.Bind();
         shader.SetUniform1f("u_Rotation", rotationAngle);
         shader.SetUniform4f("u_Color", red, 0.3f, 0.8f, 1.0f);
 
-        // Binding VAO is enough because it already encapsulates the VBO and IBO state.
-        vao.Bind();
-
-        // 6 indices, unsigned int enum, and pointer to indices not required because it's already bound (global state machine)
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // requires an index buffer
-        /* macro expands to:
-            GLClearError();
-            glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
-            if (!(GLLogCall("glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr)", __FILE__, __LINE__))) __debugbreak();
-        */
+        renderer.Draw(vao, ibo, shader);
 
         red += increment;
 

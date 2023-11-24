@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VertexBuffer.hpp"
+class VertexBuffer;
 
 /*
 	The VAO is a GPU-side object that holds the state needed to supply vertex data to vertex shaders.

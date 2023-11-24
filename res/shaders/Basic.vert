@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 // Vertex attributes are the inputs that our vertex shader receives. 
 // Each attribute represents a different aspect of our vertex data, such as position, color, texture coordinates, etc.

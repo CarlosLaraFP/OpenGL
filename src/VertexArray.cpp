@@ -1,4 +1,5 @@
 #include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
 #include "Renderer.hpp"
 
 VertexArray::VertexArray()
@@ -19,12 +20,13 @@ void VertexArray::AddBuffer(const VertexBuffer& vbo)
     this->Bind();
     // Lazy VBO binding
     vbo.Bind();
+
     const auto& vertexAttributes = vbo.GetVertexAttributes();
     unsigned int offset = 0;
 
     for (unsigned int i = 0; i < vertexAttributes.size(); ++i)
     {
-        // The index of the VertexBufferElement in the vector corresponds to the layout value in the vertex shader.
+        // The index of the VertexAttribute in the vector corresponds to the layout value in the vertex shader.
         const auto& vertexAttribute = vertexAttributes[i];
         // Enables the vertex attribute array for attribute index i, to be specified in glVertexAttribPointer.
         // This call is essential to activate the use of the specified vertex data during rendering.
