@@ -30,6 +30,10 @@ private:
 public:
 	Shader(const ShaderPaths filePaths);
 	~Shader();
+	// TODO: Move constructor
+	// TODO: Move assignment operator
+	// TODO: Copy constructor
+	// TODO: Copy assignment operator
 
 	void Bind() const;
 	void Unbind() const;

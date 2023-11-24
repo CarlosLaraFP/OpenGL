@@ -24,6 +24,7 @@
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"
+#include "Material.hpp"
 
 int main(void)
 {
@@ -61,43 +62,32 @@ int main(void)
 
     // Up until here, the specific VAO encapsulates the state of the VBO and IBO. This remains even if the VAO is unbound.
 
-    Shader shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} };
+    //Shader shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} };
 
     // Unbind everything, starting with VAO
-    vao.Unbind();
+    //vao.Unbind();
     // When we unbind buffer objects after unbinding the VAO, it ensures that these unbinding actions don't alter the state of the VAO.
     // Therefore, re-binding buffer objects before every draw call is not necessary.
-    vbo.Unbind();
-    ibo.Unbind();
+    //vbo.Unbind();
+    //ibo.Unbind();
     // Shaders can unbound independently
-    shader.Unbind();
+    //shader.Unbind();
 
-    float rotationAngle = 0.0f; // Initialize rotation angle
-    float red = 0.0f; // Initialize color
-    float increment = 0.02f;
+    Material material 
+    { 
+        Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} }, 
+        0.02f, 
+        2.0f
+    };
 
     Renderer renderer;
     
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(context.GetWindow()))
     {
+        /* Render here */
         renderer.Clear();
-
-        shader.Bind();
-        shader.SetUniform1f("u_Rotation", rotationAngle);
-        shader.SetUniform4f("u_Color", red, 0.3f, 0.8f, 1.0f);
-
-        renderer.Draw(vao, ibo, shader);
-
-        red += increment;
-
-        if (red > 1.0f) { increment = -0.02f; }
-        else if (red < 0.0f) { increment = 0.02f; }
-
-        // Increase by 5 degrees per frame
-        rotationAngle += 2.0f;
-        // Wrap around if it exceeds 360 degrees
-        if (rotationAngle >= 360.0f) { rotationAngle -= 360.0f; }
+        renderer.Draw(vao, ibo, material);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(context.GetWindow());

@@ -4,7 +4,7 @@
 
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
-#include "Shader.hpp"
+#include "Material.hpp"
 
 // Macro with compiler intrinsic to set breakpoints programatically
 #define ASSERT(x) if (!(x)) __debugbreak();
@@ -22,5 +22,5 @@ class Renderer
 {
 public:
     void Clear() const;
-    void Draw(const VertexArray& vao, const IndexBuffer& ibo, const Shader& shader) const;
+    void Draw(const VertexArray& vao, const IndexBuffer& ibo, Material& material) const;
 };
