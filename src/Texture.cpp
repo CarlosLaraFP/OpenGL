@@ -1,7 +1,7 @@
 #include "Texture.hpp"
 #include "Renderer.hpp"
 
-#include "vendor/stb_image/stb_image.h"
+#include "stb_image/stb_image.h"
 
 // TODO: Fully understand how this works
 

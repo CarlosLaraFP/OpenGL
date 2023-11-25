@@ -22,4 +22,5 @@ public:
 	Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement);
 
 	void Bind();
+	void UpdateProjectionMatrix();
 };

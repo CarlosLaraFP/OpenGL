@@ -1,4 +1,9 @@
 #include "Material.hpp"
+#include "Context.hpp"
+#include "Globals.hpp"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 Material::Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement)
     : m_Shader{ std::move(shader) }, m_Texture{ texturePath },
@@ -15,12 +20,25 @@ void Material::Bind()
 
     IncrementRotationAngle();
     //IncrementColor();
+    UpdateProjectionMatrix();
 }
 
 void Material::BindTexture()
 {
     m_Texture.Bind();
     m_Shader.SetUniform1i("u_Texture", m_Texture.GetSlot());
+}
+
+// This should be called whenever the window is resized.
+void Material::UpdateProjectionMatrix()
+{
+    if (g_WindowResized)
+    {
+        float aspectRatio = static_cast<float>(g_WindowWidth) / static_cast<float>(g_WindowHeight);
+        auto projectionMatrix = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, -1.0f, 1.0f);
+        m_Shader.SetUniformMatrix4fv("u_ProjectionMatrix", projectionMatrix);
+        g_WindowResized = false;
+    }
 }
 
 void Material::IncrementRotationAngle() 

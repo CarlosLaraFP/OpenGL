@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "glm/gtc/type_ptr.hpp"
+
 Shader::Shader(const ShaderPaths filePaths) : m_FilePaths { filePaths }, m_RendererID { 0 }
 {
     m_RendererID = CreateShader(
@@ -137,6 +139,14 @@ void Shader::SetUniform4f(const char* name, float v0, float v1, float v2, float 
 {
     unsigned int location = GetUniformLocation(name);
     GLCall(glUniform4f(location, v0, v1, v2, v3));
+}
+
+void Shader::SetUniformMatrix4fv(const char* name, glm::mat4 matrix)
+{
+    unsigned int location = GetUniformLocation(name);
+    // GLM matrices do not need to be transposed, as they are already in the format OpenGL expects
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+
 }
 
 void Shader::Bind() const

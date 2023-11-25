@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "glm/glm.hpp"
+
 struct ShaderPaths
 {
 	std::string VertexShaderPath;
@@ -44,4 +46,5 @@ public:
 	void SetUniform1f(const char* name, float value);
 	// Color animation via fragment shader.
 	void SetUniform4f(const char* name, float v0, float v1, float v2, float v3);
+	void SetUniformMatrix4fv(const char* name, glm::mat4 projectionMatrix);
 };

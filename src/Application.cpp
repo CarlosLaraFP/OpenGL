@@ -26,6 +26,15 @@
 #include "Shader.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
+#include "Globals.hpp"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+// TODO: Replace with a safer approach
+int g_WindowWidth = 640;
+int g_WindowHeight = 480;
+bool g_WindowResized = true;
 
 int main(void)
 {
@@ -74,6 +83,9 @@ int main(void)
     // Shaders can unbound independently
     //shader.Unbind();
 
+    // Orthographic matrix (for 2D) => 4 by 3 aspect ratio because screen is 640 width and 480 height
+    //glm::mat4 projectionMatrix = glm::ortho(-1.0f, 1.0f, -0.75f, 0.75f, -1.0f, 1.0f); // left, right, bottom, top, zNear, zFar
+    // This would be a perspective projection in 3D so that farther away objects are rendered smaller
     
     Material material 
     { 
@@ -90,7 +102,6 @@ int main(void)
     {
         /* Render here */
         renderer.Clear();
-
         renderer.Draw(vao, ibo, material);
 
         /* Swap front and back buffers */
