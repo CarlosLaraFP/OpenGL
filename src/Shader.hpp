@@ -24,7 +24,7 @@ private:
 	std::string ParseShader(const std::string filePath);
 	unsigned int CompileShader(unsigned int type, const std::string& source);
 	unsigned int CreateShader(const ShaderProgramSource shaderSource);
-	unsigned int GetUniformLocation(const char* name);
+	int GetUniformLocation(const char* name);
 	// caching for uniforms
 
 public:
@@ -40,6 +40,7 @@ public:
 
 	// Uniforms are used to pass data from the CPU (C++ app) to the GPU (shader program). Uniforms are set per draw call.
 	
+	void SetUniform1i(const char* name, int value);
 	// Rotation animation via vertex shader.
 	void SetUniform1f(const char* name, float value);
 	// Color animation via fragment shader.

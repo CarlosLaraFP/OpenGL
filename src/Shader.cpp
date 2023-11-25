@@ -89,7 +89,7 @@ unsigned int Shader::CreateShader(const ShaderProgramSource shaderSource)
 }
 
 // Once the shader is created, every uniform gets assigned an ID so that we can reference it (lookup by name).
-unsigned int Shader::GetUniformLocation(const char* name)
+int Shader::GetUniformLocation(const char* name)
 {
     if (m_UniformLocations.find(name) != m_UniformLocations.end())
     {
@@ -101,6 +101,12 @@ unsigned int Shader::GetUniformLocation(const char* name)
     ASSERT(location != -1);
     m_UniformLocations[name] = location;
     return location;
+}
+
+void Shader::SetUniform1i(const char* name, int value)
+{
+    unsigned int location = GetUniformLocation(name);
+    GLCall(glUniform1i(location, value));
 }
 
 void Shader::SetUniform1f(const char* name, float value)

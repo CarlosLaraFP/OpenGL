@@ -25,6 +25,7 @@
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"
 #include "Material.hpp"
+#include "Texture.hpp"
 
 int main(void)
 {
@@ -40,16 +41,18 @@ int main(void)
         In NDC, the coordinate system is defined where each axis has a range from -1 to 1,
         with the origin (0, 0, 0) at the center of the screen/window.
     */
-    float vertexPositions[] =
+    // local space coordinates origin (0, 0) is at the center; texture coordinates origin (0, 0) is defined at the bottom left
+    float vertices[] =
     {
-        -0.5f, -0.5f, // 0
-         0.5f, -0.5f, // 1
-         0.5f,  0.5f, // 2
-        -0.5f,  0.5f  // 3
+        -0.5f, -0.5f, 0.0f, 0.0f, // 0
+         0.5f, -0.5f, 1.0f, 0.0f, // 1
+         0.5f,  0.5f, 1.0f, 1.0f, // 2
+        -0.5f,  0.5f, 0.0f, 1.0f  // 3
     };
-    VertexBuffer vbo { vertexPositions, 4 * vertexComponents * sizeof(float) };
+    VertexBuffer vbo { vertices, 4 * 2 * vertexComponents * sizeof(float) };
     // Here we add distinct vertex attributes (position, normals, texture coordinates, etc.) to specify the buffer layout
-    vbo.Push<float>(vertexComponents);
+    vbo.Push<float>(vertexComponents); // vertex positions
+    vbo.Push<float>(vertexComponents); // texture coordinates
     // Since there may be multiple vertex buffers, and multiple vertex attributes belonging to each, we need a more general AddBuffer
     vao.AddBuffer(vbo);
 
@@ -62,8 +65,6 @@ int main(void)
 
     // Up until here, the specific VAO encapsulates the state of the VBO and IBO. This remains even if the VAO is unbound.
 
-    //Shader shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} };
-
     // Unbind everything, starting with VAO
     //vao.Unbind();
     // When we unbind buffer objects after unbinding the VAO, it ensures that these unbinding actions don't alter the state of the VAO.
@@ -73,13 +74,22 @@ int main(void)
     // Shaders can unbound independently
     //shader.Unbind();
 
+    /*
     Material material 
     { 
-        Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} }, 
+        Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} },
         0.02f, 
         2.0f
     };
-
+    */
+    
+    
+    Shader shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} };
+    shader.Bind();
+    Texture texture { "res/textures/valinor.png" };
+    texture.Bind();
+    shader.SetUniform1i("u_Texture", 0);
+    
     Renderer renderer;
     
     /* Loop until the user closes the window */
@@ -87,7 +97,10 @@ int main(void)
     {
         /* Render here */
         renderer.Clear();
-        renderer.Draw(vao, ibo, material);
+
+        shader.Bind();
+
+        renderer.Draw(vao, ibo);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(context.GetWindow());

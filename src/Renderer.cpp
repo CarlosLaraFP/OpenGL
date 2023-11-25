@@ -23,7 +23,7 @@ void Renderer::Clear() const
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::Draw(const VertexArray& vao, const IndexBuffer& ibo, Material& material) const
+void Renderer::Draw(const VertexArray& vao, const IndexBuffer& ibo) const
 {
     /*
         Binding VAO is enough because it already encapsulates the VBO state.
@@ -33,7 +33,7 @@ void Renderer::Draw(const VertexArray& vao, const IndexBuffer& ibo, Material& ma
     */
     vao.Bind();
     ibo.Bind();
-    material.Bind();
+    //material.Bind(); // , Material& material
 
     // 6 indices, unsigned int enum, and pointer to indices not required because it's already bound (global state machine)
     GLCall(glDrawElements(GL_TRIANGLES, ibo.GetCount(), GL_UNSIGNED_INT, nullptr)); // requires an index buffer
