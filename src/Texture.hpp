@@ -14,6 +14,10 @@ private:
 public:
 	Texture(const std::string& path);
 	~Texture();
+	Texture(Texture&& source) noexcept; // move constructor
+	Texture& operator=(Texture&& source) noexcept; // move assignment operator
+	Texture(const Texture& source) = delete; // copy constructor
+	Texture& operator=(const Texture& source) = delete; // copy assignment operator
 
 	void Bind(unsigned int slot = 0);
 	void Unbind() const;

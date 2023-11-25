@@ -1,29 +1,26 @@
 #include "Material.hpp"
 
-void Material::Bind()
+Material::Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement)
+    : m_Shader{ std::move(shader) }, m_Texture{ texturePath },
+      m_ColorIncrement{ colorIncrement }, m_RotationIncrement{ rotationIncrement } 
 {
-    m_Shader.Bind();
-    //m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
-    //m_Shader.SetUniform4f("u_Color", m_Red, 0.3f, 0.8f, 1.0f);
-
-    // Texture only needs to be bound once per frame?
-    //m_Texture.Bind(); // texture bound to slot 0
-    //m_Shader.SetUniform1i("u_Texture", m_Texture.GetSlot());
-
-    //IncrementRotationAngle();
-    //IncrementColor();
+    BindTexture();
 }
 
-void Material::BindShader()
+void Material::Bind()
 {
-    m_Shader.Bind();
+    // m_Shader.Bind() does not need to be called every frame because it's only one and the same (called once in Shader constructor)
+    m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
+    //m_Shader.SetUniform4f("u_Color", m_Red, 0.3f, 0.8f, 1.0f);
+
+    IncrementRotationAngle();
+    //IncrementColor();
 }
 
 void Material::BindTexture()
 {
-    Texture texture { "res/textures/valinor.png" };
-    texture.Bind();
-    m_Shader.SetUniform1i("u_Texture", 0);
+    m_Texture.Bind();
+    m_Shader.SetUniform1i("u_Texture", m_Texture.GetSlot());
 }
 
 void Material::IncrementRotationAngle() 

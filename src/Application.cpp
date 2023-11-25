@@ -74,21 +74,14 @@ int main(void)
     // Shaders can unbound independently
     //shader.Unbind();
 
-    /*
+    
     Material material 
     { 
         Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} },
+        "res/textures/valinor.png",
         0.02f, 
         2.0f
     };
-    */
-    
-    
-    Shader shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} };
-    shader.Bind();
-    Texture texture { "res/textures/valinor.png" };
-    texture.Bind();
-    shader.SetUniform1i("u_Texture", 0);
     
     Renderer renderer;
     
@@ -98,9 +91,7 @@ int main(void)
         /* Render here */
         renderer.Clear();
 
-        shader.Bind();
-
-        renderer.Draw(vao, ibo);
+        renderer.Draw(vao, ibo, material);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(context.GetWindow());

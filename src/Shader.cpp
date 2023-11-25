@@ -21,6 +21,24 @@ Shader::~Shader()
     GLCall(glDeleteProgram(m_RendererID));
 }
 
+Shader::Shader(Shader&& source) noexcept
+{
+    m_RendererID = source.m_RendererID;
+    m_FilePaths = source.m_FilePaths;
+    m_UniformLocations = source.m_UniformLocations;
+}
+
+Shader& Shader::operator=(Shader&& source) noexcept
+{
+    if (this == &source) { return *this; }
+
+    m_RendererID = source.m_RendererID;
+    m_FilePaths = source.m_FilePaths;
+    m_UniformLocations = source.m_UniformLocations;
+
+    return *this;
+}
+
 std::string Shader::ParseShader(const std::string filePath)
 {
     std::ifstream stream { filePath };

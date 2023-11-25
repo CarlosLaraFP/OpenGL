@@ -40,6 +40,34 @@ Texture::~Texture()
 	GLCall(glDeleteTextures(1, &m_RendererID));
 }
 
+Texture::Texture(Texture&& source) noexcept
+{
+	m_RendererID = source.m_RendererID;
+	m_FilePath = source.m_FilePath;
+	m_LocalBuffer = source.m_LocalBuffer;
+	source.m_LocalBuffer = nullptr;
+	m_Width = source.m_Width;
+	m_Height = source.m_Height;
+	m_BPP = source.m_BPP;
+	m_Slot = source.m_Slot;
+}
+
+Texture& Texture::operator=(Texture&& source) noexcept
+{
+	if (this == &source) { return *this; }
+
+	m_RendererID = source.m_RendererID;
+	m_FilePath = source.m_FilePath;
+	m_LocalBuffer = source.m_LocalBuffer;
+	source.m_LocalBuffer = nullptr;
+	m_Width = source.m_Width;
+	m_Height = source.m_Height;
+	m_BPP = source.m_BPP;
+	m_Slot = source.m_Slot;
+
+	return *this;
+}
+
 void Texture::Bind(unsigned int slot /*= 0*/)
 {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));

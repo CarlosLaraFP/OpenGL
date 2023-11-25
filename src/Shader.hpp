@@ -18,22 +18,21 @@ struct ShaderProgramSource
 class Shader
 {
 private:
-	const ShaderPaths m_FilePaths;
+	ShaderPaths m_FilePaths;
 	unsigned int m_RendererID;
-	std::unordered_map<std::string, int> m_UniformLocations;
+	std::unordered_map<std::string, int> m_UniformLocations; // caching for uniforms
 	std::string ParseShader(const std::string filePath);
 	unsigned int CompileShader(unsigned int type, const std::string& source);
 	unsigned int CreateShader(const ShaderProgramSource shaderSource);
 	int GetUniformLocation(const char* name);
-	// caching for uniforms
 
 public:
 	Shader(const ShaderPaths filePaths);
 	~Shader();
-	// TODO: Move constructor
-	// TODO: Move assignment operator
-	// TODO: Copy constructor
-	// TODO: Copy assignment operator
+	Shader(Shader&& source) noexcept; // move constructor
+	Shader& operator=(Shader&& source) noexcept; // move assignment operator
+	Shader(const Shader& source) = delete; // copy constructor
+	Shader& operator=(const Shader & source) = delete; // copy assignment operator
 
 	void Bind() const;
 	void Unbind() const;
