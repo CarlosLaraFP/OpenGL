@@ -20,12 +20,7 @@
 */
 #include "Context.hpp"
 #include "Renderer.hpp"
-#include "VertexArray.hpp"
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
-#include "Shader.hpp"
-#include "Material.hpp"
-#include "Texture.hpp"
+#include "Square.hpp"
 #include "Globals.hpp"
 
 #include "glm/glm.hpp"
@@ -40,60 +35,7 @@ int main(void)
 {
     Context context;
 
-    // TODO: class Rectangle
-
-    VertexArray vao;
-    
-    unsigned int vertexComponents = 2;
-    /*
-        When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC).
-        In NDC, the coordinate system is defined where each axis has a range from -1 to 1,
-        with the origin (0, 0, 0) at the center of the screen/window.
-    */
-    // local space coordinates origin (0, 0) is at the center; texture coordinates origin (0, 0) is defined at the bottom left
-    float vertices[] =
-    {
-        -0.5f, -0.5f, 0.0f, 0.0f, // 0
-         0.5f, -0.5f, 1.0f, 0.0f, // 1
-         0.5f,  0.5f, 1.0f, 1.0f, // 2
-        -0.5f,  0.5f, 0.0f, 1.0f  // 3
-    };
-    VertexBuffer vbo { vertices, 4 * 2 * vertexComponents * sizeof(float) };
-    // Here we add distinct vertex attributes (position, normals, texture coordinates, etc.) to specify the buffer layout
-    vbo.Push<float>(vertexComponents); // vertex positions
-    vbo.Push<float>(vertexComponents); // texture coordinates
-    // Since there may be multiple vertex buffers, and multiple vertex attributes belonging to each, we need a more general AddBuffer
-    vao.AddBuffer(vbo);
-
-    unsigned int indices[]
-    {
-        0, 1, 2,
-        2, 3, 0
-    };
-    IndexBuffer ibo { indices, 6 };
-
-    // Up until here, the specific VAO encapsulates the state of the VBO and IBO. This remains even if the VAO is unbound.
-
-    // Unbind everything, starting with VAO
-    //vao.Unbind();
-    // When we unbind buffer objects after unbinding the VAO, it ensures that these unbinding actions don't alter the state of the VAO.
-    // Therefore, re-binding buffer objects before every draw call is not necessary.
-    //vbo.Unbind();
-    //ibo.Unbind();
-    // Shaders can unbound independently
-    //shader.Unbind();
-
-    // Orthographic matrix (for 2D) => 4 by 3 aspect ratio because screen is 640 width and 480 height
-    //glm::mat4 projectionMatrix = glm::ortho(-1.0f, 1.0f, -0.75f, 0.75f, -1.0f, 1.0f); // left, right, bottom, top, zNear, zFar
-    // This would be a perspective projection in 3D so that farther away objects are rendered smaller
-    
-    Material material 
-    { 
-        Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} },
-        "res/textures/valinor.png",
-        0.02f, 
-        2.0f
-    };
+    Square square;
     
     Renderer renderer;
     
@@ -102,7 +44,7 @@ int main(void)
     {
         /* Render here */
         renderer.Clear();
-        renderer.Draw(vao, ibo, material);
+        renderer.Draw(square);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(context.GetWindow());

@@ -35,7 +35,8 @@ void Material::UpdateProjectionMatrix()
     if (g_WindowResized)
     {
         float aspectRatio = static_cast<float>(g_WindowWidth) / static_cast<float>(g_WindowHeight);
-        auto projectionMatrix = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, -1.0f, 1.0f);
+        float scale = 1.0f; // Smaller values zoom in, larger values zoom out
+        auto projectionMatrix = glm::ortho(-aspectRatio * scale, aspectRatio * scale, -scale, scale, -1.0f, 1.0f);
         m_Shader.SetUniformMatrix4fv("u_ProjectionMatrix", projectionMatrix);
         g_WindowResized = false;
     }

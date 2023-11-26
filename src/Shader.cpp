@@ -145,7 +145,7 @@ void Shader::SetUniformMatrix4fv(const char* name, glm::mat4 matrix)
 {
     unsigned int location = GetUniformLocation(name);
     // GLM matrices do not need to be transposed, as they are already in the format OpenGL expects
-    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix))); // &matrix[0][0]
 
 }
 

@@ -2,9 +2,7 @@
 
 #include <GL/glew.h>
 
-#include "VertexArray.hpp"
-#include "IndexBuffer.hpp"
-#include "Material.hpp"
+#include "Geometry.hpp"
 
 // Macro with compiler intrinsic to set breakpoints programatically
 #define ASSERT(x) if (!(x)) __debugbreak();
@@ -23,5 +21,5 @@ class Renderer
 public:
     void Clear() const;
     // TODO: Take in abstract class Geometry with appropriate virtual methods
-    void Draw(const VertexArray& vao, const IndexBuffer& ibo, Material& material) const;
+    void Draw(Geometry& geometry) const;
 };

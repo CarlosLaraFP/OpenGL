@@ -12,7 +12,7 @@ layout(location = 1) in vec2 textureCoordinates;
 out vec2 v_TextureCoordinates;
 
 // the vertex positions are multiplied by the projection matrix, transforming them into the correct space considering the aspect ratio
-uniform mat4 u_ProjectionMatrix;
+uniform mat4 u_ProjectionMatrix; // TODO: Model-View-Projection matrix
 // rotation angle in degrees
 uniform float u_Rotation;
         
