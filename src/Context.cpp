@@ -75,3 +75,24 @@ GLFWwindow* Context::GetWindow() const
 {
     return m_Window;
 }
+
+void Context::HandleCameraMovement()
+{
+    // Adjust speed as necessary
+    if (glfwGetKey(m_Window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        g_CameraOffsetX -= 0.01f;
+    }
+    if (glfwGetKey(m_Window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        g_CameraOffsetX += 0.01f;
+    }
+    if (glfwGetKey(m_Window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        g_CameraOffsetY += 0.01f;
+    }
+    if (glfwGetKey(m_Window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        g_CameraOffsetY -= 0.01f;
+    }
+}

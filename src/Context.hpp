@@ -25,4 +25,5 @@ public:
     Context();
 	~Context();
     GLFWwindow* GetWindow() const;
+    void HandleCameraMovement();
 };

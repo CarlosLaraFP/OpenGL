@@ -7,6 +7,8 @@ Square::Square()
 {
     vao = new VertexArray{};
 
+    // TODO: Parametrize to allow distinct rendered instances (GLM, reuse shaders)
+
     SetLayout();
 }
 
@@ -17,8 +19,8 @@ void Square::SetLayout()
         When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC).
         In NDC, the coordinate system is defined where each axis has a range from -1 to 1,
         with the origin (0, 0, 0) at the center of the screen/window.
+        Local space coordinates origin (0, 0) is at the center; texture coordinates origin (0, 0) is defined at the bottom left.
     */
-    // local space coordinates origin (0, 0) is at the center; texture coordinates origin (0, 0) is defined at the bottom left
     float vertices[] =
     {
         -0.5f, -0.5f, 0.0f, 0.0f, // 0

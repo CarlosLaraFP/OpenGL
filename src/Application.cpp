@@ -23,13 +23,12 @@
 #include "Square.hpp"
 #include "Globals.hpp"
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-
 // TODO: Replace with a safer approach
 int g_WindowWidth = 640;
 int g_WindowHeight = 480;
 bool g_WindowResized = true;
+float g_CameraOffsetX = 0.0f; // Horizontal camera offset
+float g_CameraOffsetY = 0.0f; // Vertical camera offset
 
 int main(void)
 {
@@ -44,6 +43,10 @@ int main(void)
     {
         /* Render here */
         renderer.Clear();
+
+        context.HandleCameraMovement();
+
+        // we could have a std::vector<Geometry> and render each in a loop
         renderer.Draw(square);
 
         /* Swap front and back buffers */
@@ -53,8 +56,7 @@ int main(void)
         glfwPollEvents();
     }
 
-    // Clean up resources
-    // Destructors called in reverse order of creation at the end of this scope.
-
     return 0;
+
+    // Destructors called in reverse order of creation at the end of this scope.
 }
