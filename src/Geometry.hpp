@@ -3,7 +3,6 @@
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Material.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 // abstract class
 class Geometry
@@ -31,6 +30,8 @@ public:
 		ibo->Bind();
 		material->Bind();
 	};
+
+	void SetModelMatrix(glm::mat4 modelMatrix) { material->SetModelMatrix(modelMatrix); }
 
 	inline unsigned int GetIndexCount() const { return ibo->GetCount(); }
 

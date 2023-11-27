@@ -4,11 +4,8 @@
 
 class Square : public Geometry
 {
-private:
-	glm::mat4 m_ModelMatrix;
-
 public:
-	Square(glm::mat4 modelMatrix);
+	Square();
 
 	virtual void SetLayout() override;
 };

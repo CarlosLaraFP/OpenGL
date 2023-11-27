@@ -34,9 +34,17 @@ int main(void)
 {
     Context context;
 
-    Square squareA { glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)) };
-    //Square squareB { glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f)) };
-    
+    Square square;
+
+    /*
+        Useful because we have multiple objects in our scene that share the same geometry but are positioned differently. 
+        We use an array or vector of transformation matrices to render multiple instances of an object at different positions.
+        We choose an array since the size is known at compile time (otherwise we would use a vector).
+    */
+    glm::mat4 translations[2];
+    translations[0] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.50f, 0.0f, 0.0f));
+    translations[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.50f, 0.0f, 0.0f));
+
     Renderer renderer;
     
     /* Loop until the user closes the window */
@@ -47,9 +55,11 @@ int main(void)
 
         context.HandleCameraMovement();
 
-        // we could have a std::vector<Geometry> and render each in a loop
-        renderer.Draw(squareA);
-        //renderer.Draw(squareB);
+        for (const auto& matrix : translations)
+        {
+            square.SetModelMatrix(matrix);
+            renderer.Draw(square);
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(context.GetWindow());

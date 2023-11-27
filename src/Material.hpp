@@ -2,7 +2,7 @@
 
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include <memory>
+#include "glm/gtc/matrix_transform.hpp"
 
 class Material
 {
@@ -13,7 +13,7 @@ private:
 	float m_RotationIncrement;
 	float m_Red { 0.0f }; // Initialize color
 	float m_ColorIncrement;
-	glm::mat4 m_ModelMatrix;
+	glm::mat4 m_ModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	
 	void BindTexture();
 	void IncrementRotationAngle();
@@ -21,8 +21,11 @@ private:
 
 public:
 	// TODO: Pass custom struct MaterialSpec
-	Material(Shader&& shader, const std::string& texturePath, glm::mat4 modelMatrix, float colorIncrement, float rotationIncrement);
+	Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement);
 
 	void Bind();
 	void UpdateProjectionMatrix();
+	void SetModelMatrix(glm::mat4 modelMatrix) { m_ModelMatrix = modelMatrix; }
+
+	inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 };

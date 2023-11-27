@@ -3,7 +3,7 @@
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 
-Square::Square(glm::mat4 modelMatrix) : m_ModelMatrix { modelMatrix }
+Square::Square()
 {
     vao = new VertexArray{};
 
@@ -45,8 +45,7 @@ void Square::SetLayout()
     material = new Material
     {
         Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} },
-        "res/textures/valinor.png",
-        m_ModelMatrix,
+        "res/textures/space.png",
         0.02f,
         2.0f
     };

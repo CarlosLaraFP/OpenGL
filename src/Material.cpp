@@ -4,9 +4,10 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <memory>
 
-Material::Material(Shader&& shader, const std::string& texturePath, glm::mat4 modelMatrix, float colorIncrement, float rotationIncrement)
-    : m_Shader{ std::move(shader) }, m_Texture{ texturePath }, m_ModelMatrix { modelMatrix },
+Material::Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement)
+    : m_Shader{ std::move(shader) }, m_Texture{ texturePath },
       m_ColorIncrement{ colorIncrement }, m_RotationIncrement{ rotationIncrement } 
 {
     BindTexture();
