@@ -3,6 +3,7 @@
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Material.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 // abstract class
 class Geometry

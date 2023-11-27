@@ -34,7 +34,8 @@ int main(void)
 {
     Context context;
 
-    Square square;
+    Square squareA { glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)) };
+    //Square squareB { glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f)) };
     
     Renderer renderer;
     
@@ -47,7 +48,8 @@ int main(void)
         context.HandleCameraMovement();
 
         // we could have a std::vector<Geometry> and render each in a loop
-        renderer.Draw(square);
+        renderer.Draw(squareA);
+        //renderer.Draw(squareB);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(context.GetWindow());

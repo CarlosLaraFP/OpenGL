@@ -13,13 +13,15 @@ private:
 	float m_RotationIncrement;
 	float m_Red { 0.0f }; // Initialize color
 	float m_ColorIncrement;
+	glm::mat4 m_ModelMatrix;
 	
 	void BindTexture();
 	void IncrementRotationAngle();
 	void IncrementColor();
 
 public:
-	Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement);
+	// TODO: Pass custom struct MaterialSpec
+	Material(Shader&& shader, const std::string& texturePath, glm::mat4 modelMatrix, float colorIncrement, float rotationIncrement);
 
 	void Bind();
 	void UpdateProjectionMatrix();

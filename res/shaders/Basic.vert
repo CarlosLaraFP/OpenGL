@@ -11,20 +11,20 @@ layout(location = 1) in vec2 textureCoordinates;
 // output data into the fragment shader
 out vec2 v_TextureCoordinates;
 
-uniform mat4 u_View;
-// the vertex positions are multiplied by the projection matrix, transforming them into the correct space considering the aspect ratio
-uniform mat4 u_ProjectionMatrix; // TODO: Model-View-Projection matrix
+// initial translation
+uniform mat4 u_Model;
 // rotation angle in degrees
 uniform float u_Rotation;
+// camera transformation
+uniform mat4 u_View;
+// the vertex positions are multiplied by the projection matrix, transforming them into the correct space considering the aspect ratio
+uniform mat4 u_ProjectionMatrix;
         
 void main()
 {
     float rad = radians(u_Rotation);
     mat2 rotationMatrix = mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
-    // Matrix operations are non-commutative
-    // The projection is meant to be the final transformation applied to bring the geometry into clip space.
-    // This applies the rotation first to the model space vertices and then applies the projection transformation.
-    gl_Position = u_ProjectionMatrix * u_View * vec4(rotationMatrix * position, 0.0, 1.0);
-    // assign the vec2 we took in from our vertex buffer
+    // Model-View-Projection matrix multiplication on our vertex positions
+    gl_Position = u_ProjectionMatrix * u_View * u_Model * vec4(rotationMatrix * position, 0.0, 1.0);
     v_TextureCoordinates = textureCoordinates;
 };

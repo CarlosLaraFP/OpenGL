@@ -17,8 +17,7 @@ class Context
 {
 private:
 	GLFWwindow* m_Window;
-    // Non-static member functions have an implicit this pointer as their first argument, 
-    // which doesn't match the expected signature of GLFWframebuffersizefun.
+    // Non-static member functions have an implicit this pointer as their first argument, which doesn't match the expected signature of GLFWframebuffersizefun.
     static void OnWindowResize(GLFWwindow* window, int width, int height);
 
 public:

@@ -3,11 +3,9 @@
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 
-Square::Square()
+Square::Square(glm::mat4 modelMatrix) : m_ModelMatrix { modelMatrix }
 {
     vao = new VertexArray{};
-
-    // TODO: Parametrize to allow distinct rendered instances (GLM, reuse shaders)
 
     SetLayout();
 }
@@ -48,6 +46,7 @@ void Square::SetLayout()
     {
         Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} },
         "res/textures/valinor.png",
+        m_ModelMatrix,
         0.02f,
         2.0f
     };
