@@ -23,6 +23,8 @@
 #include "Square.hpp"
 #include "Globals.hpp"
 
+#include "glm/gtc/type_ptr.hpp"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -45,9 +47,9 @@ int main(void)
         We use an array or vector of transformation matrices to render multiple instances of an object at different positions.
         We choose an array since the size is known at compile time (otherwise we would use a vector).
     */
-    glm::mat4 translations[2];
-    translations[0] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.50f, 0.0f, 0.0f));
-    translations[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.50f, 0.0f, 0.0f));
+    std::vector<glm::vec3> translations;
+    translations.emplace_back(-0.50f, 0.0f, 0.0f);
+    translations.emplace_back(0.50f, 0.0f, 0.0f);
 
     Renderer renderer;
 
@@ -60,12 +62,6 @@ int main(void)
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(context.GetWindow(), true);  // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
     ImGui_ImplOpenGL3_Init(glsl_version);
-    //ImGui_ImplOpenGL3_Init();
-
-    // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(context.GetWindow()))
@@ -76,7 +72,18 @@ int main(void)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow(); // Show demo window! :)
+        
+        {
+            ImGui::Begin("ImGui");
+
+            for (auto i = 0; i < translations.size(); ++i)
+            {
+                std::string label = "Translation " + std::to_string(i);
+                ImGui::SliderFloat3(label.c_str(), glm::value_ptr(translations[i]), -1.0f, 1.0f);
+            }
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+        }
 
         /* Render here */
         renderer.Clear();
@@ -84,9 +91,9 @@ int main(void)
         context.HandleCameraMovement();
 
         // TODO: Replace with batch rendering (single draw call) by using a single vertex buffer
-        for (const auto& matrix : translations)
+        for (const auto& translation : translations)
         {
-            square.SetModelMatrix(matrix);
+            square.SetTranslationVector(translation);
             renderer.Draw(square);
         }
 

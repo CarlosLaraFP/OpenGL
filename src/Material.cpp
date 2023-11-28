@@ -17,7 +17,7 @@ void Material::Bind()
 {
     // Shader only needs to be bound once (in ctor) because it's the only one used throughout.
     m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
-    m_Shader.SetUniformMatrix4fv("u_Model", m_ModelMatrix);
+    UpdateModelMatrix();
     glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(g_CameraOffsetX, g_CameraOffsetY, 0.0f));
     m_Shader.SetUniformMatrix4fv("u_View", viewMatrix);
 
@@ -29,6 +29,12 @@ void Material::BindTexture()
 {
     m_Texture.Bind();
     m_Shader.SetUniform1i("u_Texture", m_Texture.GetSlot());
+}
+
+void Material::UpdateModelMatrix()
+{
+    m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Translation);
+    m_Shader.SetUniformMatrix4fv("u_Model", m_ModelMatrix);
 }
 
 // This should be called whenever the window is resized.
