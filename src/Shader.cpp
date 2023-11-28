@@ -26,6 +26,7 @@ Shader::~Shader()
 Shader::Shader(Shader&& source) noexcept
 {
     m_RendererID = source.m_RendererID;
+    source.m_RendererID = 0;
     m_FilePaths = source.m_FilePaths;
     m_UniformLocations = source.m_UniformLocations;
 }
@@ -35,6 +36,7 @@ Shader& Shader::operator=(Shader&& source) noexcept
     if (this == &source) { return *this; }
 
     m_RendererID = source.m_RendererID;
+    source.m_RendererID = 0;
     m_FilePaths = source.m_FilePaths;
     m_UniformLocations = source.m_UniformLocations;
 
@@ -151,7 +153,10 @@ void Shader::SetUniformMatrix4fv(const char* name, glm::mat4 matrix)
 
 void Shader::Bind() const
 {
-    GLCall(glUseProgram(m_RendererID));
+    if (glIsProgram(m_RendererID))
+    {
+        GLCall(glUseProgram(m_RendererID));
+    }
 }
 
 void Shader::Unbind() const

@@ -20,8 +20,7 @@ private:
 	void IncrementColor();
 
 public:
-	// TODO: Pass custom struct MaterialSpec
-	Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement);
+	Material(const ShaderPaths filePaths, const std::string& texturePath, float colorIncrement, float rotationIncrement);
 
 	void Bind();
 	void UpdateProjectionMatrix();

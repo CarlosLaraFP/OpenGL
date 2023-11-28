@@ -5,6 +5,7 @@
 
 #include "glm/glm.hpp"
 
+// TODO: ShaderConfig
 struct ShaderPaths
 {
 	std::string VertexShaderPath;

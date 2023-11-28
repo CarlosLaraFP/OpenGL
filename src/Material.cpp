@@ -6,8 +6,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <memory>
 
-Material::Material(Shader&& shader, const std::string& texturePath, float colorIncrement, float rotationIncrement)
-    : m_Shader{ std::move(shader) }, m_Texture{ texturePath },
+Material::Material(const ShaderPaths filePaths, const std::string& texturePath, float colorIncrement, float rotationIncrement)
+    : m_Shader { filePaths }, m_Texture { texturePath },
       m_ColorIncrement{ colorIncrement }, m_RotationIncrement{ rotationIncrement } 
 {
     BindTexture();
@@ -15,7 +15,7 @@ Material::Material(Shader&& shader, const std::string& texturePath, float colorI
 
 void Material::Bind()
 {
-    // m_Shader.Bind() does not need to be called every frame because it's only one and the same (called once in Shader constructor)
+    // Shader only needs to be bound once (in ctor) because it's the only one used throughout.
     m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
     m_Shader.SetUniformMatrix4fv("u_Model", m_ModelMatrix);
     glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(g_CameraOffsetX, g_CameraOffsetY, 0.0f));

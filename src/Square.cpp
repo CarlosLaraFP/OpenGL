@@ -44,7 +44,7 @@ void Square::SetLayout()
 
     material = new Material
     {
-        Shader { {"res/shaders/Basic.vert", "res/shaders/Basic.frag"} },
+        {"res/shaders/Basic.vert", "res/shaders/Basic.frag"},
         "res/textures/space.png",
         0.02f,
         2.0f
