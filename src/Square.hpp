@@ -8,4 +8,6 @@ public:
 	Square();
 
 	virtual void SetLayout() override;
+
+	void CreateDoubleSquares(const float originalVertices[], size_t originalSize, float spacing, std::vector<float>& newVertices);
 };

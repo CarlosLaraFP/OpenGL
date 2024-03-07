@@ -16,12 +16,8 @@ Material::Material(const ShaderPaths filePaths, const std::string& texturePath, 
 void Material::Bind()
 {
     // Shader only needs to be bound once (in ctor) because it's the only one used throughout.
-    m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
     UpdateModelMatrix();
-    glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(g_CameraOffsetX, g_CameraOffsetY, 0.0f));
-    m_Shader.SetUniformMatrix4fv("u_View", viewMatrix);
-
-    IncrementRotationAngle();
+    UpdateViewMatrix();
     UpdateProjectionMatrix();
 }
 
@@ -31,13 +27,23 @@ void Material::BindTexture()
     m_Shader.SetUniform1i("u_Texture", m_Texture.GetSlot());
 }
 
+// Translations, Rotations, Scaling
 void Material::UpdateModelMatrix()
 {
-    m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Translation);
-    m_Shader.SetUniformMatrix4fv("u_Model", m_ModelMatrix);
+    m_TranslationMatrix = glm::translate(glm::mat4(1.0f), m_Translation);
+    m_Shader.SetUniformMatrix4fv("u_Model", m_TranslationMatrix);
+    m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
+    IncrementRotationAngle();
 }
 
-// This should be called whenever the window is resized.
+// Camera transformation
+void Material::UpdateViewMatrix()
+{
+    glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(g_CameraOffsetX, g_CameraOffsetY, 0.0f));
+    m_Shader.SetUniformMatrix4fv("u_View", viewMatrix);
+}
+
+// This should be called whenever the window is resized (new clip space).
 void Material::UpdateProjectionMatrix()
 {
     if (g_WindowResized)

@@ -20,6 +20,5 @@ class Renderer
 {
 public:
     void Clear() const;
-    // TODO: Take in abstract class Geometry with appropriate virtual methods
     void Draw(Geometry& geometry) const;
 };

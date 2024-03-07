@@ -43,7 +43,7 @@ Context::Context()
         throw std::runtime_error("GLEW could not be initialized.");
     }
 
-    // We know have access to all OpenGL functions of our driver's OpenGL version.
+    // We now have access to all OpenGL functions of our driver's OpenGL version.
     std::cout << glGetString(GL_VERSION) << std::endl; // 4.6.0 NVIDIA 546.17 is the latest
 
     // Blending determines how to combine output color from the fragment shader with what is already in the target buffer

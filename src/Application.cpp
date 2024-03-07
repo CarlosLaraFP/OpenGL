@@ -45,7 +45,7 @@ int main(void)
     /*
         Useful because we have multiple objects in our scene that share the same geometry but are positioned differently. 
         We use an array or vector of transformation matrices to render multiple instances of an object at different positions.
-        We choose an array since the size is known at compile time (otherwise we would use a vector).
+        We can choose an array since the size is known at compile time (otherwise we would use a vector).
     */
     std::vector<glm::vec3> translations;
     translations.emplace_back(-0.50f, 0.0f, 0.0f);
@@ -91,11 +91,12 @@ int main(void)
         context.HandleCameraMovement();
 
         // TODO: Replace with batch rendering (single draw call) by using a single vertex buffer
-        for (const auto& translation : translations)
-        {
-            square.SetTranslationVector(translation);
-            renderer.Draw(square);
-        }
+        //for (const auto& translation : translations)
+        //{
+        //    square.SetTranslationVector(translation);
+        //    renderer.Draw(square);
+        //}
+        renderer.Draw(square);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

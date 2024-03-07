@@ -31,11 +31,7 @@ public:
 		material->Bind();
 	};
 
-	void SetModelMatrix(glm::mat4 modelMatrix) { material->SetModelMatrix(modelMatrix); }
-
 	void SetTranslationVector(glm::vec3 vector) { material->SetTranslationVector(vector); }
-
-	inline float* GetTranslationVector() { return material->GetTranslationVector(); }
 
 	inline unsigned int GetIndexCount() const { return ibo->GetCount(); }
 
