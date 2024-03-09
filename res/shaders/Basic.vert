@@ -7,9 +7,13 @@
 
 layout(location = 0) in vec2 position; // vec4 for position, vec2 for rotation
 layout(location = 1) in vec2 textureCoordinates;
+layout(location = 2) in vec4 color;
+layout(location = 3) in float textureID;
 
 // output data into the fragment shader
 out vec2 v_TextureCoordinates;
+out vec4 v_Color;
+out float v_TextureID;
 
 // initial translation
 uniform mat4 u_Model;
@@ -22,9 +26,12 @@ uniform mat4 u_ProjectionMatrix;
         
 void main()
 {
+    // TODO fix: Entire vertex buffer is getting rotated rather than individual objects
     float rad = radians(u_Rotation);
     mat2 rotationMatrix = mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
     // Model-View-Projection matrix multiplication on our vertex positions
     gl_Position = u_ProjectionMatrix * u_View * u_Model * vec4(rotationMatrix * position, 0.0, 1.0);
     v_TextureCoordinates = textureCoordinates;
+    v_Color = color;
+    v_TextureID = textureID;
 };

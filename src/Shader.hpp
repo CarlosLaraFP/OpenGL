@@ -48,4 +48,5 @@ public:
 	// Color animation via fragment shader.
 	void SetUniform4f(const char* name, float v0, float v1, float v2, float v3);
 	void SetUniformMatrix4fv(const char* name, glm::mat4 projectionMatrix);
+	void SetUniform1iv(const char* name, int elements, int value[]);
 };

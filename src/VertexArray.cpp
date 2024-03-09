@@ -38,8 +38,8 @@ void VertexArray::AddBuffer(const VertexBuffer& vbo)
             vertexAttribute.componentCount,
             vertexAttribute.componentType,
             vertexAttribute.normalized,
-            vbo.GetStride(),
-            (const void*)offset
+            vbo.GetStride(), // total vertex size
+            (const void*)offset // bytes memory offset to reach attribute within vertex
         ));
 
         // If a single VBO buffer contains more vertex attributes per vertex, the offset is the total memory jump from the last attribute.

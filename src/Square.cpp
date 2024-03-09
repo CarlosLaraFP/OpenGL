@@ -12,29 +12,45 @@ Square::Square()
 
 void Square::SetLayout()
 {
-    unsigned int vertexComponents = 2;
     /*
         When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC).
         In NDC, the coordinate system is defined where each axis has a range from -1 to 1,
         with the origin (0, 0, 0) at the center of the screen/window.
         Local space coordinates origin (0, 0) is at the center; texture coordinates origin (0, 0) is defined at the bottom left.
     */
-    float vertices[] =
+    /*float vertices[] =
     {
         -0.5f, -0.5f, 0.0f, 0.0f, // 0
          0.5f, -0.5f, 1.0f, 0.0f, // 1
          0.5f,  0.5f, 1.0f, 1.0f, // 2
         -0.5f,  0.5f, 0.0f, 1.0f  // 3
+    };*/
+    // (px, py), (tx, ty), (r, g, b, a), (t)
+    float vertices[] =
+    {
+        // First square (left)
+        -0.5f - 0.5f, -0.5f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 0
+         0.5f - 0.5f, -0.5f, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 1
+         0.5f - 0.5f,  0.5f, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 2
+        -0.5f - 0.5f,  0.5f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 3
+
+        // Second square (right)
+        -0.5f + 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 4
+         0.5f + 0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 5
+         0.5f + 0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 6
+        -0.5f + 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
     };
 
-    std::vector<float> doubledVertices;
+    //std::vector<float> doubledVertices;
     // Call function to create double squares with 1.0 unit spacing
-    CreateDoubleSquares(vertices, sizeof(vertices) / sizeof(vertices[0]), 1.0f, doubledVertices);
+    //CreateDoubleSquares(vertices, sizeof(vertices) / sizeof(vertices[0]), 1.0f, doubledVertices);
 
-    vbo = new VertexBuffer { doubledVertices.data(), 8 * 2 * vertexComponents * sizeof(float) };
+    vbo = new VertexBuffer { vertices, sizeof(vertices) };
     // Here we add distinct vertex attributes (position, normals, texture coordinates, etc.) to specify the buffer layout
-    vbo->Push<float>(vertexComponents); // vertex positions
-    vbo->Push<float>(vertexComponents); // texture coordinates
+    vbo->Push<float>(2); // vertex positions
+    vbo->Push<float>(2); // texture coordinates
+    vbo->Push<float>(4); // color values
+    vbo->Push<float>(1); // texture index
     // Since there may be multiple vertex buffers, and multiple vertex attributes belonging to each, we need a more general AddBuffer
     vao->AddBuffer(*vbo);
 
@@ -45,14 +61,14 @@ void Square::SetLayout()
         4, 5, 6, // First triangle of the second square
         6, 7, 4  // Second triangle of the second square
     };
-    ibo = new IndexBuffer { indices, 3 * 2 * 2 };
+    ibo = new IndexBuffer { indices, sizeof(indices) };
 
     // Up until here, the specific VAO encapsulates the state of the VBO and IBO. This remains even if the VAO is unbound.
 
     material = new Material
     {
         {"res/shaders/Basic.vert", "res/shaders/Basic.frag"},
-        "res/textures/space.png",
+        "res/textures/space.png", "res/textures/valinor.png", // TODO Bug fix: Only the first texture is rendered
         0.02f,
         2.0f
     };

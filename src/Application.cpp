@@ -90,12 +90,12 @@ int main(void)
 
         context.HandleCameraMovement();
 
-        // TODO: Replace with batch rendering (single draw call) by using a single vertex buffer
-        //for (const auto& translation : translations)
-        //{
-        //    square.SetTranslationVector(translation);
-        //    renderer.Draw(square);
-        //}
+        // Replaced with batch rendering (single draw call) by using a single vertex buffer
+        /*for (const auto& translation : translations)
+        {
+            square.SetTranslationVector(translation);
+            renderer.Draw(square);
+        }*/
         renderer.Draw(square);
 
         ImGui::Render();

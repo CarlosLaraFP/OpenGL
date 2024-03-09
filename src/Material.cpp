@@ -6,11 +6,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <memory>
 
-Material::Material(const ShaderPaths filePaths, const std::string& texturePath, float colorIncrement, float rotationIncrement)
-    : m_Shader { filePaths }, m_Texture { texturePath },
+Material::Material(const ShaderPaths filePaths, const std::string& texturePathA, const std::string& texturePathB, float colorIncrement, float rotationIncrement)
+    : m_Shader { filePaths }, m_TextureA { texturePathA }, m_TextureB { texturePathB },
       m_ColorIncrement{ colorIncrement }, m_RotationIncrement{ rotationIncrement } 
 {
-    BindTexture();
+    BindTextures();
 }
 
 void Material::Bind()
@@ -21,10 +21,17 @@ void Material::Bind()
     UpdateProjectionMatrix();
 }
 
-void Material::BindTexture()
+void Material::BindTextures()
 {
-    m_Texture.Bind();
-    m_Shader.SetUniform1i("u_Texture", m_Texture.GetSlot());
+    m_TextureA.Bind(0);
+    //m_Shader.SetUniform1i("u_TextureA", m_TextureA.GetSlot());
+
+    m_TextureB.Bind(1);
+    //m_Shader.SetUniform1i("u_TextureB", m_TextureB.GetSlot());
+
+    int samplers[2] = { 0, 1 };
+
+    m_Shader.SetUniform1iv("u_Textures", 2, samplers);
 }
 
 // Translations, Rotations, Scaling

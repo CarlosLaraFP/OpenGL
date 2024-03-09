@@ -14,7 +14,8 @@ Texture::Texture(const std::string& path)
 
 	m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4); // 4 for RGBA
 
-	GLCall(glGenTextures(1, &m_RendererID));
+	//GLCall(glGenTextures(1, &m_RendererID));
+	GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 
 	// These must be specified
@@ -25,14 +26,24 @@ Texture::Texture(const std::string& path)
 
 	// Allocate our image data on the GPU
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
-	
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 
 	// Assumes we no longer need the texture data on the CPU
 	if (m_LocalBuffer)
 	{
 		stbi_image_free(m_LocalBuffer);
 	}
+}
+
+void Texture::Bind(unsigned int slot /*= 0*/)
+{
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+	m_Slot = slot;
+}
+
+void Texture::Unbind() const
+{
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 Texture::~Texture()
@@ -66,16 +77,4 @@ Texture& Texture::operator=(Texture&& source) noexcept
 	m_Slot = source.m_Slot;
 
 	return *this;
-}
-
-void Texture::Bind(unsigned int slot /*= 0*/)
-{
-	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
-	m_Slot = slot;
-}
-
-void Texture::Unbind() const
-{
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }

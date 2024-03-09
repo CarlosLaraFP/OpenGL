@@ -4,11 +4,18 @@
 #include "Texture.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+struct TexturePaths
+{
+	std::string TexturePathA;
+	std::string TexturePathB;
+};
+
 class Material
 {
 private:
 	Shader m_Shader;
-	Texture m_Texture;
+	Texture m_TextureA;
+	Texture m_TextureB;
 	float m_RotationAngle { 0.0f }; // Initialize rotation angle
 	float m_RotationIncrement;
 	float m_Red { 0.0f }; // Initialize color
@@ -16,12 +23,12 @@ private:
 	glm::vec3 m_Translation = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 m_TranslationMatrix = glm::translate(glm::mat4(1.0f), m_Translation);
 	
-	void BindTexture();
+	void BindTextures();
 	void IncrementRotationAngle();
 	void IncrementColor();
 
 public:
-	Material(const ShaderPaths filePaths, const std::string& texturePath, float colorIncrement, float rotationIncrement);
+	Material(const ShaderPaths filePaths, const std::string& texturePathA, const std::string& texturePathB, float colorIncrement, float rotationIncrement);
 
 	void Bind();
 	void UpdateModelMatrix();

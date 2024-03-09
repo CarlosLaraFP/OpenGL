@@ -151,6 +151,12 @@ void Shader::SetUniformMatrix4fv(const char* name, glm::mat4 matrix)
 
 }
 
+void Shader::SetUniform1iv(const char* name, int elements, int value[])
+{
+    unsigned int location = GetUniformLocation(name);
+    GLCall(glUniform1iv(location, elements, value));
+}
+
 void Shader::Bind() const
 {
     if (glIsProgram(m_RendererID))
