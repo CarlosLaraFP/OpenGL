@@ -25,35 +25,10 @@ void Square::SetLayout()
          0.5f,  0.5f, 1.0f, 1.0f, // 2
         -0.5f,  0.5f, 0.0f, 1.0f  // 3
     };*/
-    // (px, py), (tx, ty), (r, g, b, a), (t)
-    float vertices[] =
-    {
-        // First square (left)
-        -0.5f - 0.5f, -0.5f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 0
-         0.5f - 0.5f, -0.5f, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 1
-         0.5f - 0.5f,  0.5f, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 2
-        -0.5f - 0.5f,  0.5f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 3
+    //vbo = new VertexBuffer { vertices, sizeof(vertices), false }; // Static vertex buffer (readonly GPU memory)
+    vbo = new VertexBuffer { nullptr, sizeof(Vertex) * 1000, true }; // Dynamic vertex buffer can hold up to 1,000 vertices
 
-        // Second square (right)
-        -0.5f + 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 4
-         0.5f + 0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 5
-         0.5f + 0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 6
-        -0.5f + 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
-    };
-
-    //std::vector<float> doubledVertices;
-    // Call function to create double squares with 1.0 unit spacing
-    //CreateDoubleSquares(vertices, sizeof(vertices) / sizeof(vertices[0]), 1.0f, doubledVertices);
-
-    vbo = new VertexBuffer { vertices, sizeof(vertices) };
-    // Here we add distinct vertex attributes (position, normals, texture coordinates, etc.) to specify the buffer layout
-    vbo->Push<float>(2); // vertex positions
-    vbo->Push<float>(2); // texture coordinates
-    vbo->Push<float>(4); // color values
-    vbo->Push<float>(1); // texture index
-    // Since there may be multiple vertex buffers, and multiple vertex attributes belonging to each, we need a more general AddBuffer
-    vao->AddBuffer(*vbo);
-
+    // TODO: For loop that keeps generating indices based on vertex buffer
     unsigned int indices[]
     {
         0, 1, 2, // triangle A
@@ -68,32 +43,8 @@ void Square::SetLayout()
     material = new Material
     {
         {"res/shaders/Basic.vert", "res/shaders/Basic.frag"},
-        "res/textures/space.png", "res/textures/valinor.png", // TODO Bug fix: Only the first texture is rendered
+        "res/textures/space.png", "res/textures/valinor.png",
         0.02f,
         2.0f
     };
-}
-
-void Square::CreateDoubleSquares(const float originalVertices[], size_t originalSize, float spacing, std::vector<float>& newVertices) {
-    // Clear the vector that will hold the new vertices
-    newVertices.clear();
-
-    // Determine the number of vertices in the original array
-    size_t numVertices = originalSize / 4; // Since each vertex has 4 components (x, y, u, v)
-
-    // Copy original vertices to newVertices vector, adjusting for the left square
-    for (size_t i = 0; i < numVertices; ++i) {
-        newVertices.push_back(originalVertices[i * 4] - spacing / 2); // Adjust X
-        newVertices.push_back(originalVertices[i * 4 + 1]);           // Y stays the same
-        newVertices.push_back(originalVertices[i * 4 + 2]);           // U (texture coord)
-        newVertices.push_back(originalVertices[i * 4 + 3]);           // V (texture coord)
-    }
-
-    // Copy again for the right square, adjusting positions
-    for (size_t i = 0; i < numVertices; ++i) {
-        newVertices.push_back(originalVertices[i * 4] + spacing / 2); // Adjust X
-        newVertices.push_back(originalVertices[i * 4 + 1]);           // Y stays the same
-        newVertices.push_back(originalVertices[i * 4 + 2]);           // U (texture coord)
-        newVertices.push_back(originalVertices[i * 4 + 3]);           // V (texture coord)
-    }
 }

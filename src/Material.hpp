@@ -4,11 +4,6 @@
 #include "Texture.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-struct TexturePaths
-{
-	std::string TexturePathA;
-	std::string TexturePathB;
-};
 
 class Material
 {

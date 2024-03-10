@@ -1,7 +1,5 @@
 #pragma once
 
-class VertexBuffer;
-
 /*
 	The VAO is a GPU-side object that holds the state needed to supply vertex data to vertex shaders.
 	The link between the attributes defined in the VAO and those in the shader is made through the attribute indices.
@@ -15,7 +13,6 @@ public:
 	VertexArray();
 	~VertexArray();
 
-	void AddBuffer(const VertexBuffer& vbo);
 	void Bind() const;
 	void Unbind() const;
 };

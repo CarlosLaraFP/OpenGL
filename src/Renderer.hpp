@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-#include "Geometry.hpp"
+class Geometry;
 
 // Macro with compiler intrinsic to set breakpoints programatically
 #define ASSERT(x) if (!(x)) __debugbreak();
