@@ -104,14 +104,17 @@ int main(void)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         
+        
         {
-            ImGui::Begin("ImGui");
-
+            ImGui::Begin("Controls");
+            /*
             for (auto i = 0; i < translations.size(); ++i)
             {
                 std::string label = "Translation " + std::to_string(i);
                 ImGui::SliderFloat3(label.c_str(), glm::value_ptr(translations[i]), -1.0f, 1.0f);
             }
+            */
+            ImGui::DragFloat2("Texture A Position", square.m_Position, 0.1f);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
         }
@@ -144,7 +147,7 @@ int main(void)
         };*/
 
         // TODO: Load mesh from file
-        auto q0 = CreateQuad(-0.5f, 0.0f, 0.0f);
+        auto q0 = CreateQuad(square.m_Position[0], square.m_Position[1], 0.0f);
         auto q1 = CreateQuad(0.5f, 0.0f, 1.0f);
 
         std::vector<Vertex> vertices;

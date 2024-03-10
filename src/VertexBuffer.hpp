@@ -77,32 +77,4 @@ public:
 	{
 		m_VertexAttributes = std::move(attributes);
 	}
-
-	template<typename T>
-	void Push(unsigned int count)
-	{
-		// Compile-time assertion unsupported in VS2022
-		throw std::runtime_error("Unsupported type for VertexBuffer::Push");
-	}
-
-	template<>
-	void Push<float>(unsigned int count)
-	{
-		m_VertexAttributes.emplace_back(VertexAttribute{ GL_FLOAT, count, GL_FALSE });
-		m_Stride += count * VertexAttribute::GetSizeOfType(GL_FLOAT);
-	}
-
-	template<>
-	void Push<unsigned int>(unsigned int count)
-	{
-		m_VertexAttributes.emplace_back(VertexAttribute{ GL_UNSIGNED_INT, count, GL_FALSE });
-		m_Stride += count * VertexAttribute::GetSizeOfType(GL_UNSIGNED_INT);
-	}
-
-	template<>
-	void Push<unsigned char>(unsigned int count)
-	{
-		m_VertexAttributes.emplace_back(VertexAttribute{ GL_UNSIGNED_BYTE, count, GL_TRUE });
-		m_Stride += count * VertexAttribute::GetSizeOfType(GL_UNSIGNED_BYTE);
-	}
 };

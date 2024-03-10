@@ -41,9 +41,14 @@ void VertexBuffer::Bind()
     // Update the subet of a buffer object's data. Index 0 because it's the entire buffer from the beginning.
     GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, m_Vertices.size() * sizeof(Vertex), m_Vertices.data()));
 
-    EnableVertexAttributes();
+    this->EnableVertexAttributes();
 
-    // vbo.Unbind()?
+    /*
+        Once you've finished setting up vertex attributes for a VBO, unbind the VBO to prevent accidental modifications.
+        If rendering involves multiple VBOs, we unbind the current VBO before binding and using another one. 
+        This ensures that subsequent vertex attribute setup calls and modifications apply to the correct VBO.
+    */
+    this->Unbind();
 }
 
 void VertexBuffer::Unbind() const
