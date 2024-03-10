@@ -55,45 +55,18 @@ void VertexBuffer::Unbind() const
 // Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
 void VertexBuffer::EnableVertexAttributes() const 
 {
-    GLCall(glEnableVertexAttribArray(0));
-    GLCall(glVertexAttribPointer(
-        0,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(Vertex), // total vertex size
-        (const void*)offsetof(Vertex, Position) // bytes memory offset to reach attribute within vertex
-    ));
-
-    GLCall(glEnableVertexAttribArray(1));
-    GLCall(glVertexAttribPointer(
-        1,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(Vertex), // total vertex size
-        (const void*)offsetof(Vertex, TextureCoordinates) // bytes memory offset to reach attribute within vertex
-    ));
-
-    GLCall(glEnableVertexAttribArray(2));
-    GLCall(glVertexAttribPointer(
-        2,
-        4,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(Vertex), // total vertex size
-        (const void*)offsetof(Vertex, Color) // bytes memory offset to reach attribute within vertex
-    ));
-
-    GLCall(glEnableVertexAttribArray(3));
-    GLCall(glVertexAttribPointer(
-        3,
-        1,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(Vertex), // total vertex size
-        (const void*)offsetof(Vertex, TextureID) // bytes memory offset to reach attribute within vertex
-    ));
+    for (size_t i = 0; i < m_VertexAttributes.size(); ++i)
+    {
+        GLCall(glEnableVertexAttribArray(i));
+        GLCall(glVertexAttribPointer(
+            i,
+            m_VertexAttributes[i].componentCount,
+            m_VertexAttributes[i].componentType,
+            m_VertexAttributes[i].normalized,
+            sizeof(Vertex), // total vertex size
+            (const void*)m_VertexAttributes[i].offset // bytes memory offset to reach attribute within vertex
+        ));
+    }
 }
 
 // Enables vertex for the currently bound VBO

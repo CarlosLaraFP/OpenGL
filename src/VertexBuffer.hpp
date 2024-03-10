@@ -30,9 +30,10 @@ struct Vertex
 
 struct VertexAttribute
 {
-	unsigned int componentType;
 	unsigned int componentCount;
+	unsigned int componentType;
 	unsigned char normalized;
+	unsigned int offset;
 
 	static unsigned int GetSizeOfType(unsigned int type)
 	{
@@ -79,6 +80,11 @@ public:
 		{
 			m_Vertices.push_back(vertices[i]); // Copy each element
 		}
+	}
+
+	void SetVertexAttributes(std::vector<VertexAttribute> attributes)
+	{
+		m_VertexAttributes = std::move(attributes);
 	}
 
 	template<typename T>

@@ -153,6 +153,14 @@ int main(void)
 
         square.SetVertexData(vertices);
 
+        std::vector<VertexAttribute> vertexAttributes;
+        vertexAttributes.push_back({ 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, Position) });
+        vertexAttributes.push_back({ 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, TextureCoordinates) });
+        vertexAttributes.push_back({ 4, GL_FLOAT, GL_FALSE, offsetof(Vertex, Color) });
+        vertexAttributes.push_back({ 1, GL_FLOAT, GL_FALSE, offsetof(Vertex, TextureID) });
+
+        square.SetVertexAttributes(std::move(vertexAttributes));
+
         renderer.Draw(square);
 
         ImGui::Render();

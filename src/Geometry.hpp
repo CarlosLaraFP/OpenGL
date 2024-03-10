@@ -25,6 +25,11 @@ public:
 		vbo->SetVertexData(vertices);
 	}
 
+	void SetVertexAttributes(std::vector<VertexAttribute> attributes)
+	{
+		vbo->SetVertexAttributes(std::move(attributes));
+	}
+
 	void Bind()
 	{
 		/*
