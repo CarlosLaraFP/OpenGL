@@ -37,20 +37,24 @@ void VertexBuffer::Bind()
         -0.5f + 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
     };*/
 
-    auto q0 = CreateQuad(-0.5f, 0.0f, 0.0f);
-    auto q1 = CreateQuad( 0.5f, 0.0f, 1.0f);
-
-    Vertex vertices[8];
-    memcpy(vertices, q0.data(), q0.size() * sizeof(Vertex));
-    memcpy(vertices + q0.size(), q1.data(), q1.size() * sizeof(Vertex));
-
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
     // Update the subet of a buffer object's data. Index 0 because it's the entire buffer from the beginning.
-    GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
+    GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, m_Vertices.size() * sizeof(Vertex), m_Vertices.data()));
 
-    // Specifies how OpenGL should interpret the vertex data. 
-    // Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
+    EnableVertexAttributes();
 
+    // vbo.Unbind()?
+}
+
+void VertexBuffer::Unbind() const
+{
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+}
+
+// Specifies how OpenGL should interpret the vertex data. 
+// Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
+void VertexBuffer::EnableVertexAttributes() const 
+{
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glVertexAttribPointer(
         0,
@@ -90,8 +94,6 @@ void VertexBuffer::Bind()
         sizeof(Vertex), // total vertex size
         (const void*)offsetof(Vertex, TextureID) // bytes memory offset to reach attribute within vertex
     ));
-
-    // vbo.Unbind()?
 }
 
 // Enables vertex for the currently bound VBO
@@ -122,39 +124,4 @@ void VertexBuffer::AddVertices()
     }
 
     // vbo.Unbind()?
-}
-
-// (px, py), (tx, ty), (r, g, b, a), (t)
-std::array<Vertex, 4> VertexBuffer::CreateQuad(float x, float y, float t)
-{
-    Vertex v0;
-    v0.Position = { -0.5f + x, -0.5f + y };
-    v0.TextureCoordinates = { 0.0f, 0.0f };
-    v0.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v0.TextureID = t;
-
-    Vertex v1;
-    v1.Position = { 0.5f + x, -0.5f + y };
-    v1.TextureCoordinates = { 1.0f, 0.0f };
-    v1.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v1.TextureID = t;
-
-    Vertex v2;
-    v2.Position = { 0.5f + x, 0.5f + y };
-    v2.TextureCoordinates = { 1.0f, 1.0f };
-    v2.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v2.TextureID = t;
-
-    Vertex v3;
-    v3.Position = { -0.5f + x, 0.5f + y };
-    v3.TextureCoordinates = { 0.0f, 1.0f };
-    v3.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v3.TextureID = t;
-
-    return { v0, v1, v2, v3 };
-}
-
-void VertexBuffer::Unbind() const
-{
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }

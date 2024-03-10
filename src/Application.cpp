@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <array>
 /*
     GLEW is used to interface with this machine's GPU drivers to access NVIDIA's OpenGL code implementation.
     It simplifies the process of accessing advanced features and extensions in OpenGL that are not included in the standard OpenGL distribution.
@@ -35,6 +36,36 @@ int g_WindowHeight = 480;
 bool g_WindowResized = true;
 float g_CameraOffsetX = 0.0f; // Horizontal camera offset
 float g_CameraOffsetY = 0.0f; // Vertical camera offset
+
+// (px, py), (tx, ty), (r, g, b, a), (t)
+static std::array<Vertex, 4> CreateQuad(float x, float y, float t)
+{
+    Vertex v0;
+    v0.Position = { -0.5f + x, -0.5f + y };
+    v0.TextureCoordinates = { 0.0f, 0.0f };
+    v0.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
+    v0.TextureID = t;
+
+    Vertex v1;
+    v1.Position = { 0.5f + x, -0.5f + y };
+    v1.TextureCoordinates = { 1.0f, 0.0f };
+    v1.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
+    v1.TextureID = t;
+
+    Vertex v2;
+    v2.Position = { 0.5f + x, 0.5f + y };
+    v2.TextureCoordinates = { 1.0f, 1.0f };
+    v2.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
+    v2.TextureID = t;
+
+    Vertex v3;
+    v3.Position = { -0.5f + x, 0.5f + y };
+    v3.TextureCoordinates = { 0.0f, 1.0f };
+    v3.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
+    v3.TextureID = t;
+
+    return { v0, v1, v2, v3 };
+}
 
 int main(void)
 {
@@ -90,12 +121,38 @@ int main(void)
 
         context.HandleCameraMovement();
 
-        // Replaced with batch rendering (single draw call) by using a single vertex buffer
+        // Replaced with batch rendering (single draw call) by using a single (dynamic) vertex buffer
         /*for (const auto& translation : translations)
         {
             square.SetTranslationVector(translation);
             renderer.Draw(square);
         }*/
+        // (px, py), (tx, ty), (r, g, b, a), (t)
+        /*float vertices[] =
+        {
+            // First square (left)
+            -0.5f - 0.5f, -0.5f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 0
+             0.5f - 0.5f, -0.5f, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 1
+             0.5f - 0.5f,  0.5f, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 2
+            -0.5f - 0.5f,  0.5f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 3
+
+            // Second square (right)
+            -0.5f + 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 4
+             0.5f + 0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 5
+             0.5f + 0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 6
+            -0.5f + 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
+        };*/
+
+        // TODO: AddVertex
+        auto q0 = CreateQuad(-0.5f, 0.0f, 0.0f);
+        auto q1 = CreateQuad(0.5f, 0.0f, 1.0f);
+
+        Vertex vertices[8];
+        memcpy(vertices, q0.data(), q0.size() * sizeof(Vertex));
+        memcpy(vertices + q0.size(), q1.data(), q1.size() * sizeof(Vertex));
+
+        square.SetVertexData(vertices);
+
         renderer.Draw(square);
 
         ImGui::Render();

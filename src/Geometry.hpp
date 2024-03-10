@@ -19,6 +19,12 @@ public:
 
 	virtual void SetLayout() = 0;
 
+	template<size_t N> // non-type template parameter
+	void SetVertexData(const Vertex(&vertices)[N])
+	{
+		vbo->SetVertexData(vertices);
+	}
+
 	void Bind()
 	{
 		/*

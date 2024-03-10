@@ -57,10 +57,29 @@ private:
 	unsigned int m_RendererID;
 	std::vector<VertexAttribute> m_VertexAttributes;
 	unsigned int m_Stride { 0 };
+	void EnableVertexAttributes() const;
+	std::vector<Vertex> m_Vertices;
 
 public:
 	VertexBuffer(const void* data, unsigned int size, bool dynamic);
 	~VertexBuffer();
+
+	void Bind();
+	void Unbind() const;
+
+	template<size_t N>
+	void SetVertexData(const Vertex(&vertices)[N])
+	{
+		// TODO: Move a vector into this method instead
+		m_Vertices.clear();
+		m_Vertices.reserve(N);
+
+		// TODO: Implement more efficiently
+		for (size_t i = 0; i < N; ++i)
+		{
+			m_Vertices.push_back(vertices[i]); // Copy each element
+		}
+	}
 
 	template<typename T>
 	void Push(unsigned int count)
@@ -91,10 +110,7 @@ public:
 	}
 
 	void AddVertices();
-	std::array<Vertex, 4> CreateQuad(float x, float y, float t);
 
 	//inline const std::vector<VertexAttribute>& GetVertexAttributes() const { return m_VertexAttributes; }
 	inline unsigned int GetStride() const { return m_Stride; }
-	void Bind();
-	void Unbind() const;
 };

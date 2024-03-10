@@ -5,13 +5,12 @@
 
 Square::Square()
 {
-    vao = new VertexArray{};
-
     SetLayout();
 }
 
 void Square::SetLayout()
 {
+    vao = new VertexArray{};
     /*
         When working with vertex shaders and rendering, we use Normalized Device Coordinates (NDC).
         In NDC, the coordinate system is defined where each axis has a range from -1 to 1,
