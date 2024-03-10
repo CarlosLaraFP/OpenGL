@@ -68,33 +68,3 @@ void VertexBuffer::EnableVertexAttributes() const
         ));
     }
 }
-
-// Enables vertex for the currently bound VBO
-void VertexBuffer::AddVertices()
-{
-    unsigned int offset = 0;
-
-    for (unsigned int i = 0; i < m_VertexAttributes.size(); ++i)
-    {
-        // The index of the VertexAttribute in the vector corresponds to the layout value in the vertex shader.
-        const auto& vertexAttribute = m_VertexAttributes[i];
-        // Enables the vertex attribute array for attribute index i, to be specified in glVertexAttribPointer.
-        // This call is essential to activate the use of the specified vertex data during rendering.
-        GLCall(glEnableVertexAttribArray(i));
-        // Specifies how OpenGL should interpret the vertex data. Vertex attribute pointers tell OpenGL the layout of the vertex buffer.
-        // Only one vertex attribute in this case (position), each with two floats (size == component count, not bytes), with vertex stride of 8 bytes.
-        GLCall(glVertexAttribPointer(
-            i,
-            vertexAttribute.componentCount,
-            vertexAttribute.componentType,
-            vertexAttribute.normalized,
-            this->GetStride(), // total vertex size
-            (const void*)offset // bytes memory offset to reach attribute within vertex (TODO based on struct members)
-        ));
-
-        // If a single VBO buffer contains more vertex attributes per vertex, the offset is the total memory jump from the last attribute.
-        offset += vertexAttribute.componentCount * VertexAttribute::GetSizeOfType(vertexAttribute.componentType);
-    }
-
-    // vbo.Unbind()?
-}

@@ -19,10 +19,9 @@ public:
 
 	virtual void SetLayout() = 0;
 
-	template<size_t N> // non-type template parameter
-	void SetVertexData(const Vertex(&vertices)[N])
+	void SetVertexData(std::vector<Vertex> vertices)
 	{
-		vbo->SetVertexData(vertices);
+		vbo->SetVertexData(std::move(vertices));
 	}
 
 	void SetVertexAttributes(std::vector<VertexAttribute> attributes)

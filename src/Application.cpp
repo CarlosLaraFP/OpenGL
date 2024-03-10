@@ -143,15 +143,16 @@ int main(void)
             -0.5f + 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
         };*/
 
-        // TODO: AddVertex
+        // TODO: Load mesh from file
         auto q0 = CreateQuad(-0.5f, 0.0f, 0.0f);
         auto q1 = CreateQuad(0.5f, 0.0f, 1.0f);
 
-        Vertex vertices[8];
-        memcpy(vertices, q0.data(), q0.size() * sizeof(Vertex));
-        memcpy(vertices + q0.size(), q1.data(), q1.size() * sizeof(Vertex));
+        std::vector<Vertex> vertices;
+        vertices.reserve(8);
+        vertices.insert(vertices.end(), std::begin(q0), std::end(q0));
+        vertices.insert(vertices.end(), std::begin(q1), std::end(q1));
 
-        square.SetVertexData(vertices);
+        square.SetVertexData(std::move(vertices));
 
         std::vector<VertexAttribute> vertexAttributes;
         vertexAttributes.push_back({ 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, Position) });

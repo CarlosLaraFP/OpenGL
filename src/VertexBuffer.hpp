@@ -68,18 +68,9 @@ public:
 	void Bind();
 	void Unbind() const;
 
-	template<size_t N>
-	void SetVertexData(const Vertex(&vertices)[N])
+	void SetVertexData(std::vector<Vertex> vertices)
 	{
-		// TODO: Move a vector into this method instead
-		m_Vertices.clear();
-		m_Vertices.reserve(N);
-
-		// TODO: Implement more efficiently
-		for (size_t i = 0; i < N; ++i)
-		{
-			m_Vertices.push_back(vertices[i]); // Copy each element
-		}
+		m_Vertices = std::move(vertices);
 	}
 
 	void SetVertexAttributes(std::vector<VertexAttribute> attributes)
@@ -114,9 +105,4 @@ public:
 		m_VertexAttributes.emplace_back(VertexAttribute{ GL_UNSIGNED_BYTE, count, GL_TRUE });
 		m_Stride += count * VertexAttribute::GetSizeOfType(GL_UNSIGNED_BYTE);
 	}
-
-	void AddVertices();
-
-	//inline const std::vector<VertexAttribute>& GetVertexAttributes() const { return m_VertexAttributes; }
-	inline unsigned int GetStride() const { return m_Stride; }
 };
