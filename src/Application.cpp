@@ -1,13 +1,8 @@
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <array>
-#include <cmath>
 /*
     GLEW is used to interface with this machine's GPU drivers to access NVIDIA's OpenGL code implementation.
     It simplifies the process of accessing advanced features and extensions in OpenGL that are not included in the standard OpenGL distribution.
@@ -48,10 +43,10 @@ static unsigned int vertexCount = 0;
 
 // (px, py), (tx, ty), (r, g, b, a), (t)
 static std::array<Vertex, 4> CreateQuad(float x, float y, float rotationDegrees, float t) {
-    float rad = rotationDegrees * M_PI / 180.0f; // Convert degrees to radians
-    // Rotation matrix components
-    float cosRad = cos(rad);
-    float sinRad = sin(rad);
+    // Use GLM to create a rotation matrix
+    float rad = glm::radians(rotationDegrees); // GLM provides a function to convert degrees to radians
+
+    glm::mat2 rotationMatrix = glm::mat2(glm::cos(rad), -glm::sin(rad), glm::sin(rad), glm::cos(rad));
 
     // Define the quad centered at the origin
     std::array<Vertex, 4> vertices = { {
@@ -63,13 +58,11 @@ static std::array<Vertex, 4> CreateQuad(float x, float y, float rotationDegrees,
 
     // Apply rotation and translation to each vertex
     for (Vertex& v : vertices) {
-        // Rotate around the origin
-        float rotatedX = v.Position.x * cosRad - v.Position.y * sinRad;
-        float rotatedY = v.Position.x * sinRad + v.Position.y * cosRad;
+        // Rotate around the origin using the rotation matrix
+        v.Position = rotationMatrix * v.Position;
 
         // Translate the vertex
-        v.Position.x = rotatedX + x;
-        v.Position.y = rotatedY + y;
+        v.Position += glm::vec2(x, y);
     }
 
     vertexCount += 4;
