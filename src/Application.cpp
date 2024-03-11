@@ -1,8 +1,13 @@
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <array>
+#include <cmath>
 /*
     GLEW is used to interface with this machine's GPU drivers to access NVIDIA's OpenGL code implementation.
     It simplifies the process of accessing advanced features and extensions in OpenGL that are not included in the standard OpenGL distribution.
@@ -37,8 +42,10 @@ bool g_WindowResized = true;
 float g_CameraOffsetX = 0.0f; // Horizontal camera offset
 float g_CameraOffsetY = 0.0f; // Vertical camera offset
 
+static unsigned int vertexCount = 0;
+
 // (px, py), (tx, ty), (r, g, b, a), (t)
-static std::array<Vertex, 4> CreateQuad(float x, float y, float t)
+/*static std::array<Vertex, 4> CreateQuad(float x, float y, float t)
 {
     Vertex v0;
     v0.Position = { -0.5f + x, -0.5f + y };
@@ -64,7 +71,38 @@ static std::array<Vertex, 4> CreateQuad(float x, float y, float t)
     v3.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
     v3.TextureID = t;
 
+    vertexCount += 4;
+
     return { v0, v1, v2, v3 };
+}*/
+static std::array<Vertex, 4> CreateQuad(float x, float y, float rotationDegrees, float t) {
+    float rad = rotationDegrees * M_PI / 180.0f; // Convert degrees to radians
+    // Rotation matrix components
+    float cosRad = cos(rad);
+    float sinRad = sin(rad);
+
+    // Define the quad centered at the origin
+    std::array<Vertex, 4> vertices = { {
+        {{-0.5f, -0.5f}, {0.0f, 0.0f}, {0.18f, 0.6f, 0.96f, 1.0f}, t},
+        {{ 0.5f, -0.5f}, {1.0f, 0.0f}, {0.18f, 0.6f, 0.96f, 1.0f}, t},
+        {{ 0.5f,  0.5f}, {1.0f, 1.0f}, {0.18f, 0.6f, 0.96f, 1.0f}, t},
+        {{-0.5f,  0.5f}, {0.0f, 1.0f}, {0.18f, 0.6f, 0.96f, 1.0f}, t}
+    } };
+
+    // Apply rotation and translation to each vertex
+    for (Vertex& v : vertices) {
+        // Rotate around the origin
+        float rotatedX = v.Position.a * cosRad - v.Position.b * sinRad;
+        float rotatedY = v.Position.a * sinRad + v.Position.b * cosRad;
+
+        // Translate the vertex
+        v.Position.a = rotatedX + x;
+        v.Position.b = rotatedY + y;
+    }
+
+    vertexCount += 4;
+
+    return vertices;
 }
 
 int main(void)
@@ -83,6 +121,7 @@ int main(void)
     translations.emplace_back(0.50f, 0.0f, 0.0f);
 
     Renderer renderer;
+
 
     const char* glsl_version = "#version 430 core";
     IMGUI_CHECKVERSION();
@@ -115,6 +154,7 @@ int main(void)
             }
             */
             ImGui::DragFloat2("Texture A Position", square.m_Position, 0.1f);
+            ImGui::DragFloat("Texture A Rotation", &square.m_RotationAngle, 1.0f, 0.0f, 360.0f);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
         }
@@ -146,12 +186,15 @@ int main(void)
             -0.5f + 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
         };*/
 
+        vertexCount = 0;
+
         // TODO: Load mesh from file
-        auto q0 = CreateQuad(square.m_Position[0], square.m_Position[1], 0.0f);
-        auto q1 = CreateQuad(0.5f, 0.0f, 1.0f);
+        auto q0 = CreateQuad(square.m_Position[0], square.m_Position[1], square.m_RotationAngle, 0.0f);
+        //square.IncrementRotationAngle();
+        auto q1 = CreateQuad(0.5f, 0.0f, 0.0f, 1.0f);
 
         std::vector<Vertex> vertices;
-        vertices.reserve(8);
+        vertices.reserve(vertexCount);
         vertices.insert(vertices.end(), std::begin(q0), std::end(q0));
         vertices.insert(vertices.end(), std::begin(q1), std::end(q1));
 
@@ -166,9 +209,9 @@ int main(void)
         square.SetVertexAttributes(std::move(vertexAttributes));
 
         std::vector<unsigned int> indices;
-        indices.reserve(8);
+        indices.reserve(vertexCount / 4 * 6); // works for quads-only geometry
 
-        for (size_t i = 0; i < 8 / 4; ++i)
+        for (size_t i = 0; i < vertexCount / 4; ++i)
         {
             // Add indices for the first triangle of the quad
             indices.push_back(0 + i * 4);
