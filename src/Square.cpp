@@ -25,17 +25,17 @@ void Square::SetLayout()
         -0.5f,  0.5f, 0.0f, 1.0f  // 3
     };*/
     //vbo = new VertexBuffer { vertices, sizeof(vertices), false }; // Static vertex buffer (readonly GPU memory)
-    vbo = new VertexBuffer { nullptr, sizeof(Vertex) * 1000, true }; // Dynamic vertex buffer can hold up to 1,000 vertices
+    vbo = new VertexBuffer { nullptr, 1000, true }; // Dynamic vertex buffer can hold up to 1,000 vertices
 
-    // TODO: For loop that keeps generating indices based on vertex buffer
+    /*
     unsigned int indices[]
     {
         0, 1, 2, // triangle A
         2, 3, 0,  // triangle B
         4, 5, 6, // First triangle of the second square
         6, 7, 4  // Second triangle of the second square
-    };
-    ibo = new IndexBuffer { indices, sizeof(indices) };
+    };*/
+    ibo = new IndexBuffer{ nullptr, 1250, true }; // Dynamic index buffer can hold up to 1,250 indices
 
     // Up until here, the specific VAO encapsulates the state of the VBO and IBO. This remains even if the VAO is unbound.
 

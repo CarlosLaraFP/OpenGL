@@ -68,6 +68,11 @@ public:
 	void Bind();
 	void Unbind() const;
 
+	const std::vector<Vertex>& GetVertices() const
+	{
+		return m_Vertices;
+	}
+
 	void SetVertexData(std::vector<Vertex> vertices)
 	{
 		m_Vertices = std::move(vertices);

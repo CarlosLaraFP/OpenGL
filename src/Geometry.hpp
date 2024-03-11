@@ -29,6 +29,11 @@ public:
 		vbo->SetVertexAttributes(std::move(attributes));
 	}
 
+	void SetIndexBuffer(std::vector<unsigned int> indices)
+	{
+		ibo->SetIndexBuffer(std::move(indices));
+	}
+
 	void Bind()
 	{
 		/*

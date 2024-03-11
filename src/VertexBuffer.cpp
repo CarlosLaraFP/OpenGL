@@ -11,7 +11,7 @@ VertexBuffer::VertexBuffer(const void* data, unsigned int size, bool dynamic)
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
     // Copies the vertex data (vertexPositions) to the GPU's memory for fast and efficient rendering.
     // When passing an array to a function, it decays into a pointer to its first element rather than being copied.
-    GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, size * sizeof(Vertex), data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
 }
 
 VertexBuffer::~VertexBuffer()

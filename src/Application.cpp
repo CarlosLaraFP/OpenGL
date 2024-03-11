@@ -165,6 +165,23 @@ int main(void)
 
         square.SetVertexAttributes(std::move(vertexAttributes));
 
+        std::vector<unsigned int> indices;
+        indices.reserve(8);
+
+        for (size_t i = 0; i < 8 / 4; ++i)
+        {
+            // Add indices for the first triangle of the quad
+            indices.push_back(0 + i * 4);
+            indices.push_back(1 + i * 4);
+            indices.push_back(2 + i * 4);
+            // Add indices for the second triangle of the quad
+            indices.push_back(2 + i * 4);
+            indices.push_back(3 + i * 4);
+            indices.push_back(0 + i * 4);
+        }
+
+        square.SetIndexBuffer(std::move(indices));
+
         renderer.Draw(square);
 
         ImGui::Render();

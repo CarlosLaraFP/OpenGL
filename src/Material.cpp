@@ -39,8 +39,8 @@ void Material::UpdateModelMatrix()
 {
     m_TranslationMatrix = glm::translate(glm::mat4(1.0f), m_Translation);
     m_Shader.SetUniformMatrix4fv("u_Model", m_TranslationMatrix);
-    m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
-    IncrementRotationAngle();
+    //m_Shader.SetUniform1f("u_Rotation", m_RotationAngle);
+    //IncrementRotationAngle();
 }
 
 // Camera transformation

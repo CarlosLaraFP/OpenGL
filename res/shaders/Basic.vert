@@ -18,7 +18,7 @@ out float v_TextureID;
 // initial translation
 uniform mat4 u_Model;
 // rotation angle in degrees
-uniform float u_Rotation;
+//uniform float u_Rotation;
 // camera transformation
 uniform mat4 u_View;
 // the vertex positions are multiplied by the projection matrix, transforming them into the correct space considering the aspect ratio
@@ -27,10 +27,11 @@ uniform mat4 u_ProjectionMatrix;
 void main()
 {
     // TODO fix: Entire vertex buffer is getting rotated rather than individual objects
-    float rad = radians(u_Rotation);
-    mat2 rotationMatrix = mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+    //float rad = radians(u_Rotation);
+    //mat2 rotationMatrix = mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
     // Model-View-Projection matrix multiplication on our vertex positions
-    gl_Position = u_ProjectionMatrix * u_View * u_Model * vec4(rotationMatrix * position, 0.0, 1.0);
+    //gl_Position = u_ProjectionMatrix * u_View * u_Model * vec4(rotationMatrix * position, 0.0, 1.0);
+    gl_Position = u_ProjectionMatrix * u_View * u_Model * vec4(position, 0.0, 1.0);
     v_TextureCoordinates = textureCoordinates;
     v_Color = color;
     v_TextureID = textureID;
