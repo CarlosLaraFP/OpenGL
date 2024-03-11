@@ -30,6 +30,8 @@
 #include "Globals.hpp"
 
 #include "glm/gtc/type_ptr.hpp"
+#include <glm/glm.hpp> // Include the main GLM header
+#include <glm/gtc/matrix_transform.hpp> // Include for transformation functions
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -45,36 +47,6 @@ float g_CameraOffsetY = 0.0f; // Vertical camera offset
 static unsigned int vertexCount = 0;
 
 // (px, py), (tx, ty), (r, g, b, a), (t)
-/*static std::array<Vertex, 4> CreateQuad(float x, float y, float t)
-{
-    Vertex v0;
-    v0.Position = { -0.5f + x, -0.5f + y };
-    v0.TextureCoordinates = { 0.0f, 0.0f };
-    v0.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v0.TextureID = t;
-
-    Vertex v1;
-    v1.Position = { 0.5f + x, -0.5f + y };
-    v1.TextureCoordinates = { 1.0f, 0.0f };
-    v1.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v1.TextureID = t;
-
-    Vertex v2;
-    v2.Position = { 0.5f + x, 0.5f + y };
-    v2.TextureCoordinates = { 1.0f, 1.0f };
-    v2.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v2.TextureID = t;
-
-    Vertex v3;
-    v3.Position = { -0.5f + x, 0.5f + y };
-    v3.TextureCoordinates = { 0.0f, 1.0f };
-    v3.Color = { 0.18f, 0.6f, 0.96f, 1.0f };
-    v3.TextureID = t;
-
-    vertexCount += 4;
-
-    return { v0, v1, v2, v3 };
-}*/
 static std::array<Vertex, 4> CreateQuad(float x, float y, float rotationDegrees, float t) {
     float rad = rotationDegrees * M_PI / 180.0f; // Convert degrees to radians
     // Rotation matrix components
@@ -92,12 +64,12 @@ static std::array<Vertex, 4> CreateQuad(float x, float y, float rotationDegrees,
     // Apply rotation and translation to each vertex
     for (Vertex& v : vertices) {
         // Rotate around the origin
-        float rotatedX = v.Position.a * cosRad - v.Position.b * sinRad;
-        float rotatedY = v.Position.a * sinRad + v.Position.b * cosRad;
+        float rotatedX = v.Position.x * cosRad - v.Position.y * sinRad;
+        float rotatedY = v.Position.x * sinRad + v.Position.y * cosRad;
 
         // Translate the vertex
-        v.Position.a = rotatedX + x;
-        v.Position.b = rotatedY + y;
+        v.Position.x = rotatedX + x;
+        v.Position.y = rotatedY + y;
     }
 
     vertexCount += 4;
@@ -188,7 +160,7 @@ int main(void)
 
         vertexCount = 0;
 
-        // TODO: Load mesh from file
+        // TODO: Load mesh from OBJ Blender file
         auto q0 = CreateQuad(square.m_Position[0], square.m_Position[1], square.m_RotationAngle, 0.0f);
         //square.IncrementRotationAngle();
         auto q1 = CreateQuad(0.5f, 0.0f, 0.0f, 1.0f);

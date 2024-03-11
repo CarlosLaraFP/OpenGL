@@ -3,28 +3,17 @@
 #include <vector>
 #include <stdexcept>
 
+#include <glm/glm.hpp> // Include the main GLM header
+#include <glm/gtc/matrix_transform.hpp> // Include for transformation functions
+
 #include "Renderer.hpp"
 
-struct Vec2
-{
-	float a, b;
-};
-
-struct Vec3
-{
-	float a, b, c;
-};
-
-struct Vec4
-{
-	float a, b, c, d;
-};
 
 struct Vertex 
 {
-	Vec2 Position;
-	Vec2 TextureCoordinates;
-	Vec4 Color;
+	glm::vec2 Position;
+	glm::vec2 TextureCoordinates;
+	glm::vec4 Color;
 	float TextureID;
 };
 
